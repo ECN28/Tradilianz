@@ -25,7 +25,7 @@ public class Customer {
 	private String streetAddress;
 	private String city;
 	private String postalCode;
-    @NotNull(message = "Email is mandatory")
+    @NotNull(message = "email is mandatory")
 	private String email;
 	private String phoneNumber;
 	@CreationTimestamp

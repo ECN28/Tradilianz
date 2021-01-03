@@ -4,13 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
+import com.yildiz.tradilianz.customer.CustomerService;
 
 @SpringBootApplication
 public class TradilianzApplication {
@@ -64,6 +63,14 @@ public class TradilianzApplication {
 				log.info(ex.getMessage());
 			}
 
+		};
+	}
+	
+	@Bean
+	public CommandLineRunner demoService(CustomerService service) {
+		return (args) ->{
+			//fetch all customer with service
+			log.info(service.findAll().toString());
 		};
 	}
 
