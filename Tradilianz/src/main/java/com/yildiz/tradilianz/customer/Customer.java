@@ -1,13 +1,13 @@
 package com.yildiz.tradilianz.customer;
 
 import java.sql.Timestamp;
-import java.time.OffsetDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,12 +17,15 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+    @NotNull(message = "given name is mandatory")
 	private String givenName;
+    @NotNull(message = "surname is mandatory")
 	private String surname;
 	private String birthday;
 	private String streetAddress;
 	private String city;
 	private String postalCode;
+    @NotNull(message = "Email is mandatory")
 	private String email;
 	private String phoneNumber;
 	@CreationTimestamp
