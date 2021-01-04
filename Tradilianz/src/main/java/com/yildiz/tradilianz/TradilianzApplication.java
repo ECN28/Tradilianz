@@ -25,9 +25,9 @@ public class TradilianzApplication {
 		return (args) -> {
 			// save few customers
 			repository.save(new Customer("Jennifer", "Lopez", "24.07.1969", "unknown", "New York City", "10100",
-					"JenniferLopezNYC@gmail.com", "-", 2000));
+					"JenniferLopezNYC@gmail.com", "-",91500252.34, 2000));
 			repository.save(new Customer("Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x", "Leipzig", "04205",
-					"ercan_xxx@hotmail.de", "0176217xxxx", 10));
+					"ercan_xxx@hotmail.de", "0176217xxxx",6.50, 10));
 			
 			try {
 			// fetch all customers

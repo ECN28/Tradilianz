@@ -26,5 +26,6 @@ public class CustomerDTO {
 	private String email;
 	private String phoneNumber;
 	private Timestamp timestamp;
+	private Double balance;
 	private Integer bonuspoints;
 }

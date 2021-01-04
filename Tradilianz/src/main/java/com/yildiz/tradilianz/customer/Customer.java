@@ -17,7 +17,7 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-    @NotNull(message = "given name is mandatory")
+	@NotNull(message = "given name is mandatory")
 	private String givenName;
     @NotNull(message = "surname is mandatory")
 	private String surname;
@@ -30,6 +30,7 @@ public class Customer {
 	private String phoneNumber;
 	@CreationTimestamp
 	private Timestamp timestamp;
+	private Double balance;
 	private Integer bonuspoints;
 	
 	protected Customer () {
@@ -37,7 +38,7 @@ public class Customer {
 	}
 	
 	public Customer(String givenName, String surname, String birthday, String streetAddress, 
-			String city, String postalCode, String email, String phoneNumber, Integer bonuspoints) {
+			String city, String postalCode, String email, String phoneNumber,Double balance, Integer bonuspoints) {
 		this.givenName = givenName;
 		this.surname = surname;
 		this.birthday = birthday;
@@ -46,6 +47,7 @@ public class Customer {
 		this.postalCode = postalCode;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
+		this.balance = balance;
 		this.bonuspoints = bonuspoints;
 	}
 	
@@ -54,7 +56,7 @@ public class Customer {
 		return("Vorname: "+givenName+" Nachname: "+surname+" Geburtstag: "+
 				birthday+" Straße: "+streetAddress+" Stadt: "+city+" Postleitzahl: "+
 				postalCode+" E-Mail-Adresse: "+email+" Telefonnummer: "+phoneNumber+
-				" Bonuspunkte: "+bonuspoints);
+				"Kontostand: "+balance+" Bonuspunkte: "+bonuspoints);
 	}
 	
 	public Long getId() {
@@ -101,5 +103,48 @@ public class Customer {
 		return bonuspoints;
 	}
 	
+	public Double getBalance() {
+		return balance;
+	}
+	
+    public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public void setStreetAddress(String streetAddress) {
+		this.streetAddress = streetAddress;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public void setBonuspoints(Integer bonuspoints) {
+		this.bonuspoints = bonuspoints;
+	}
 
 }
