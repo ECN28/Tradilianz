@@ -1,8 +1,20 @@
 package com.yildiz.tradilianz.customer;
 
+import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
@@ -15,5 +27,14 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 	Customer findById(long id);
 
 	Customer findByEmail(String email);
-
+	
+	//Update Customer workaround email field ConstraintViolationException
+	@Transactional
+	@Modifying
+	@Query("UPDATE Customer c SET c.givenName = :#{#customer.givenName}, c.surname = :#{#customer.surname}, c.birthday= :#{#customer.birthday},"
+			+ " c.streetAddress = :#{#customer.streetAddress}, c.city = :#{#customer.city}, c.postalCode = :#{#customer.postalCode},"
+			+ " c.phoneNumber = :#{#customer.phoneNumber}, c.balance= :#{#customer.balance}, c.bonuspoints= :#{#customer.bonuspoints}"
+			+ " WHERE c.id = :#{#id} ")
+	void updateCustomerByDTO(@Param("customer") Customer customer, @Param("id") Long id);
+	
 }

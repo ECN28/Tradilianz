@@ -25,7 +25,6 @@ public class CustomerService {
 
 	// Gebe Liste von Kunden zurück
 	public List<CustomerDTO> findAll() {
-
 		var it = customerRepository.findAll();
 		var customerList = new ArrayList<CustomerDTO>();
 		for (Customer customer : it) {
@@ -35,7 +34,7 @@ public class CustomerService {
 		return customerList;
 	}
 
-	// Gebe einen bestimmten Kundne zurück
+	// Gebe einen bestimmten Kunden zurück
 	public CustomerDTO findOneById(long id) {
 		Customer customer = customerRepository.findById(id);
 		CustomerDTO customerDTO = convertToDto(customer);
@@ -45,12 +44,9 @@ public class CustomerService {
 	// Speicher einen Kunden in der Datenbank und gebe diesen zurück
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
-			Customer customer = convertToEntity(customerDTO);
-			log.info("Customer Entity nach Konventierung: "+customer.toString());
-			customerRepository.save(customer);
-
-			// Abrufen der gespeicherten Entity und Umwandlung in DTO
-			CustomerDTO responseCustomer = convertToDto(customer);
+			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
+			// Abrufen der gespeicherten Entity und Umwandlung in DTO, weil DTO nun weitere Werte enthält als zuvor (Id & timestamp)
+			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
 			return responseCustomer;
 		} else {
 			log.info("Kunden speichern in die Datenbank fehlgeschlagen");
@@ -58,13 +54,33 @@ public class CustomerService {
 		}
 	}
 
-	//Umwandlung von Entity zu DTO Objekt
+	// Kundendaten bearbeiten
+	public CustomerDTO updateCustomer(CustomerDTO customerDTO, Long id) {
+		if (customerDTO != null) {
+			 customerRepository.updateCustomerByDTO(convertToEntity(customerDTO), id);
+			// Abrufen der gespeicherten Entity und Umwandlung in DTO
+			Customer getCustomer = customerRepository.findById(id).get();
+			CustomerDTO responseCustomer = convertToDto(getCustomer);
+			return responseCustomer;
+		} else {
+			log.info("Bearbeiten des Kunden in der Datenbank fehlgeschlagen!");
+			return null;
+		}
+
+	}
+
+	// Lösche Kunden aus der Datenbank
+	public void deleteCustomer(Long id) {
+		customerRepository.deleteById(id);
+	}
+
+	// Umwandlung von Entity zu DTO Objekt
 	public CustomerDTO convertToDto(Customer customer) {
 		CustomerDTO customerDTO = modelMapper.map(customer, CustomerDTO.class);
 		return customerDTO;
 	}
 
-	//Umwandlung von DTO zu Entity Objekt
+	// Umwandlung von DTO zu Entity Objekt
 	private Customer convertToEntity(CustomerDTO customerDTO) {
 		Customer customer = modelMapper.map(customerDTO, Customer.class);
 		return customer;
