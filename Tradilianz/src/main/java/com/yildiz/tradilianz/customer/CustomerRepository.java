@@ -27,14 +27,24 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 	Customer findById(long id);
 
 	Customer findByEmail(String email);
-	
-	//Update Customer workaround email field ConstraintViolationException
-	@Transactional
-	@Modifying
-	@Query("UPDATE Customer c SET c.givenName = :#{#customer.givenName}, c.surname = :#{#customer.surname}, c.birthday= :#{#customer.birthday},"
-			+ " c.streetAddress = :#{#customer.streetAddress}, c.city = :#{#customer.city}, c.postalCode = :#{#customer.postalCode},"
-			+ " c.phoneNumber = :#{#customer.phoneNumber}, c.balance= :#{#customer.balance}, c.bonuspoints= :#{#customer.bonuspoints}"
-			+ " WHERE c.id = :#{#id} ")
-	void updateCustomerByDTO(@Param("customer") Customer customer, @Param("id") Long id);
-	
+
+	/*
+	 * //Update Customer workaround email field ConstraintViolationException
+	 * 
+	 * @Transactional
+	 * 
+	 * @Modifying
+	 * 
+	 * @Query("UPDATE Customer c SET c.givenName = :#{#customer.givenName}, c.surname = :#{#customer.surname}, c.birthday= :#{#customer.birthday},"
+	 * +
+	 * " c.streetAddress = :#{#customer.streetAddress}, c.city = :#{#customer.city}, c.postalCode = :#{#customer.postalCode},"
+	 * +
+	 * " c.phoneNumber = :#{#customer.phoneNumber}, c.balance= :#{#customer.balance}, c.bonuspoints= :#{#customer.bonuspoints}"
+	 * + " WHERE c.id = :#{#id} ") void updateCustomerByDTO(@Param("customer")
+	 * Customer customer, @Param("id") Long id);
+	 * 
+	 * Instead above code we use @Column(updatable = false) in Customer Entity and
+	 * use the save() method from our Interface CustomerRepository
+	 */
+
 }

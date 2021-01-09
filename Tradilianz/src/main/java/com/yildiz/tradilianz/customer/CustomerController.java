@@ -2,6 +2,8 @@ package com.yildiz.tradilianz.customer;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,33 +23,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CustomerController {
-	
+
 	@Autowired
 	private CustomerService customerService;
-	
+
 	@GetMapping("/customers")
-	public List<CustomerDTO> allCustomer(){
+	public List<CustomerDTO> allCustomer() {
 		return customerService.findAll();
 	}
-	
+
 	@GetMapping("/customers/{id}")
 	public CustomerDTO oneCustomer(@PathVariable("id") long id) {
 		return customerService.findOneById(id);
 	}
-	
+
 	@PostMapping("/customers")
 	public CustomerDTO addCustomer(@RequestBody CustomerDTO customerDTO) {
 		return customerService.saveCustomer(customerDTO);
 	}
-	
+
 	@PutMapping("/customers/{id}")
 	public CustomerDTO updateCustomer(@PathVariable("id") long id, @RequestBody CustomerDTO customerDTO) {
-		return customerService.updateCustomer(customerDTO, id);
+		return customerService.updateCustomer(id, customerDTO);
 	}
-	
+
 	@DeleteMapping("/customers/{id}")
 	public void deleteCustomer(@PathVariable("id") long id) {
-		 customerService.deleteCustomer(id);
+		customerService.deleteCustomer(id);
 	}
 
 }

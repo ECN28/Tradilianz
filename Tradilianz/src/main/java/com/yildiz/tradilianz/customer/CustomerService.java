@@ -45,7 +45,8 @@ public class CustomerService {
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
 			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
-			// Abrufen der gespeicherten Entity und Umwandlung in DTO, weil DTO nun weitere Werte enthält als zuvor (Id & timestamp)
+			// Abrufen der gespeicherten Entity und Umwandlung in DTO, weil DTO nun weitere
+			// Werte enthält als zuvor (Id & timestamp)
 			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
 			return responseCustomer;
 		} else {
@@ -55,12 +56,21 @@ public class CustomerService {
 	}
 
 	// Kundendaten bearbeiten
-	public CustomerDTO updateCustomer(CustomerDTO customerDTO, Long id) {
+	public CustomerDTO updateCustomer(long id, CustomerDTO customerDTO) {
 		if (customerDTO != null) {
-			 customerRepository.updateCustomerByDTO(convertToEntity(customerDTO), id);
+			Customer customer = customerRepository.findById(id);
+			customer.setSurname(customerDTO.getSurname());
+			customer.setGivenName(customerDTO.getGivenName());
+			customer.setBalance(customerDTO.getBalance());
+			customer.setBirthday(customerDTO.getBirthday());
+			customer.setBonuspoints(customerDTO.getBonuspoints());
+			customer.setCity(customerDTO.getCity());
+			customer.setPhoneNumber(customerDTO.getPhoneNumber());
+			customer.setPostalCode(customerDTO.getPostalCode());
+			customer.setStreetAddress(customerDTO.getStreetAddress());
+			customerRepository.save(customer); // ruft em.merge(entity) auf, da entity bereits existiert
 			// Abrufen der gespeicherten Entity und Umwandlung in DTO
-			Customer getCustomer = customerRepository.findById(id).get();
-			CustomerDTO responseCustomer = convertToDto(getCustomer);
+			CustomerDTO responseCustomer = convertToDto(customer);
 			return responseCustomer;
 		} else {
 			log.info("Bearbeiten des Kunden in der Datenbank fehlgeschlagen!");

@@ -25,24 +25,25 @@ public class TradilianzApplication {
 		return (args) -> {
 			// save few customers
 			repository.save(new Customer("Jennifer", "Lopez", "24.07.1969", "unknown", "New York City", "10100",
-					"JenniferLopezNYC@gmail.com", "-",91500252.34, 2000));
+					"JenniferLopezNYC@gmail.com", "-", 91500252.34, 2000));
 			repository.save(new Customer("Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x", "Leipzig", "04205",
-					"ercan_xxx@hotmail.de", "0176217xxxx",6.50, 10));
-			
+					"ercan_xxx@hotmail.de", "0176217xxxx", 6.50, 10));
+
 			try {
-			// fetch all customers
-			log.info("Customers found with findAll():");
-			log.info("-------------------------------");
-			for (Customer customer : repository.findAll()) {
-				log.info(customer.toString());
-			}
-			log.info("");
-			}catch(NullPointerException ex) {
+				// fetch all customers
+				log.info("Customers found with findAll():");
+				log.info("-------------------------------");
+				for (Customer customer : repository.findAll()) {
+					log.info(customer.toString());
+				}
+				log.info("");
+			} catch (NullPointerException ex) {
 				log.info(ex.getMessage());
 			}
 
 			try {
-				// fetch an individual customer by ID. if Id is not valid exception Message is thrown
+				// fetch an individual customer by ID. if Id is not valid exception Message is
+				// thrown
 				Customer customer = repository.findById(3L);
 				log.info("Customer found with findById(1L):");
 				log.info("--------------------------------");
@@ -51,25 +52,25 @@ public class TradilianzApplication {
 			} catch (NullPointerException ex) {
 				log.info(ex.getMessage());
 			}
-			
+
 			try {
-				//fetch an individual customer by EMAIL
+				// fetch an individual customer by EMAIL
 				Customer customer = repository.findByEmail("ercan_xxx@hotmail.de");
 				log.info("Customer found with findbyEmail(email)");
 				log.info("--------------------------------");
 				log.info(customer.toString());
 				log.info("");
-			}catch(NullPointerException ex) {
+			} catch (NullPointerException ex) {
 				log.info(ex.getMessage());
 			}
 
 		};
 	}
-	
+
 	@Bean
 	public CommandLineRunner demoService(CustomerService service) {
-		return (args) ->{
-			//fetch all customer with service
+		return (args) -> {
+			// fetch all customer with service
 			log.info(service.findAll().toString());
 		};
 	}

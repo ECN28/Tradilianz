@@ -7,40 +7,38 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 public class Customer {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@NotNull(message = "given name is mandatory")
+	@Column(nullable = false)
 	private String givenName;
-    @NotNull(message = "surname is mandatory")
+	@Column(nullable = false)
 	private String surname;
 	private String birthday;
 	private String streetAddress;
 	private String city;
 	private String postalCode;
-    @NotNull(message = "email is mandatory")
-    @Column(unique=true)
+	@Column(updatable = false, nullable = false)
 	private String email;
 	private String phoneNumber;
 	@CreationTimestamp
 	private Timestamp timestamp;
 	private Double balance;
 	private Integer bonuspoints;
-	
-	protected Customer () {
-		
+
+	protected Customer() {
+
 	}
-	
-	public Customer(String givenName, String surname, String birthday, String streetAddress, 
-			String city, String postalCode, String email, String phoneNumber,Double balance, Integer bonuspoints) {
+
+	public Customer(String givenName, String surname, String birthday, String streetAddress, String city,
+			String postalCode, String email, String phoneNumber, Double balance, Integer bonuspoints) {
 		this.givenName = givenName;
 		this.surname = surname;
 		this.birthday = birthday;
@@ -52,15 +50,14 @@ public class Customer {
 		this.balance = balance;
 		this.bonuspoints = bonuspoints;
 	}
-	
+
 	@Override
 	public String toString() {
-		return("Vorname: "+givenName+" Nachname: "+surname+" Geburtstag: "+
-				birthday+" Straße: "+streetAddress+" Stadt: "+city+" Postleitzahl: "+
-				postalCode+" E-Mail-Adresse: "+email+" Telefonnummer: "+phoneNumber+
-				"Kontostand: "+balance+" Bonuspunkte: "+bonuspoints);
+		return ("Vorname: " + givenName + " Nachname: " + surname + " Geburtstag: " + birthday + " Straße: "
+				+ streetAddress + " Stadt: " + city + " Postleitzahl: " + postalCode + " E-Mail-Adresse: " + email
+				+ " Telefonnummer: " + phoneNumber + "Kontostand: " + balance + " Bonuspunkte: " + bonuspoints);
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -104,12 +101,12 @@ public class Customer {
 	public Integer getBonuspoints() {
 		return bonuspoints;
 	}
-	
+
 	public Double getBalance() {
 		return balance;
 	}
-	
-    public void setGivenName(String givenName) {
+
+	public void setGivenName(String givenName) {
 		this.givenName = givenName;
 	}
 
