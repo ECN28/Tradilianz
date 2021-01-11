@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yildiz.tradilianz.exception.CustomerNotFoundException;
+import com.yildiz.tradilianz.exception.NoDataFoundException;
+
 @Service
 public class CustomerService {
 
@@ -31,14 +34,25 @@ public class CustomerService {
 			customerDTO = convertToDto(customer);
 			customerList.add(customerDTO);
 		}
-		return customerList;
+
+		if (customerList.isEmpty()) {
+			throw new NoDataFoundException();
+		} else {
+			return customerList;
+		}
+
 	}
 
 	// Gebe einen bestimmten Kunden zurück
 	public CustomerDTO findOneById(long id) {
 		Customer customer = customerRepository.findById(id);
-		CustomerDTO customerDTO = convertToDto(customer);
-		return customerDTO;
+
+		if (customer == null) {
+			throw new CustomerNotFoundException(id);
+		} else {
+			CustomerDTO customerDTO = convertToDto(customer);
+			return customerDTO;
+		}
 	}
 
 	// Speicher einen Kunden in der Datenbank und gebe diesen zurück
@@ -57,8 +71,10 @@ public class CustomerService {
 
 	// Kundendaten bearbeiten
 	public CustomerDTO updateCustomer(long id, CustomerDTO customerDTO) {
-		if (customerDTO != null) {
-			Customer customer = customerRepository.findById(id);
+		Customer customer = customerRepository.findById(id);
+		if (customer == null) {
+			throw new CustomerNotFoundException(id);
+		} else {
 			customer.setSurname(customerDTO.getSurname());
 			customer.setGivenName(customerDTO.getGivenName());
 			customer.setBalance(customerDTO.getBalance());
@@ -72,16 +88,18 @@ public class CustomerService {
 			// Abrufen der gespeicherten Entity und Umwandlung in DTO
 			CustomerDTO responseCustomer = convertToDto(customer);
 			return responseCustomer;
-		} else {
-			log.info("Bearbeiten des Kunden in der Datenbank fehlgeschlagen!");
-			return null;
 		}
-
 	}
 
 	// Lösche Kunden aus der Datenbank
-	public void deleteCustomer(Long id) {
-		customerRepository.deleteById(id);
+	public void deleteCustomer(long id) {
+		Customer customer = customerRepository.findById(id);
+		if (customer == null) {
+			throw new CustomerNotFoundException(id);
+		} else {
+			customerRepository.deleteById(id);
+		}
+
 	}
 
 	// Umwandlung von Entity zu DTO Objekt
