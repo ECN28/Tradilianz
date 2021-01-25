@@ -25,26 +25,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Customer user = null;
 		// Check for username or email passed through username parameter
 		boolean valid = EmailValidator.getInstance().isValid(username);
 		if (valid == false) {
-
-			/*
-			 * Build with UserDetailsImpl but if user for Customer class is null I want to
-			 * try another repository and do something like this: Retailer user =
-			 * retailerRepository.findByUsername(username); And if it is not null it should
-			 * pass user Object which class is Retailer and so on.
-			 * 
-			 */
-			Customer user = customerRepository.findByUsername(username);
-
-			return CustomerDetailsImpl.build(user);
+			try {
+				user = customerRepository.findByUsername(username);
+			} catch (NullPointerException e) {
+				System.out.println(e.getMessage());
+			}
 
 		} else {
-			Customer user = customerRepository.findByEmail(username);
+			try {
+				user = customerRepository.findByEmail(username);
 
-			return CustomerDetailsImpl.build(user);
+			} catch (NullPointerException e) {
+				System.out.println(e.getMessage());
+			}
 
 		}
+		return CustomerDetailsImpl.build(user);
 	}
 }
