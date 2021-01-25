@@ -1,87 +1,68 @@
-# Project Title
+# Tradilianz
 
-Tradilianz mobile shop system --> detailed information will added soon
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Tradilianz mobile shop system with rewards --> detailed information will added soon
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+To run this application successfully, you need to install following tools on your system:
 
-```
-Give examples
-```
+- PostgreSQL version 12+
+- Java Development Kit (JDK). I recommend latest version
+- Apache Maven 3.6.3
+- Spring Tool Suite (Optional)
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+First of all, lets take care about setting up our Database with PostgreSQL. You can follow my Instructions step by step:
 
-Say what the step will be
+1. Download PostgreSQL version 12 --> https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+2. While Installation you set a password which is important to connect to PostgreSQL server! Pls set your own password and modify the application.properties file in the Spring Boot application. 
+    ```
+    Tradilianz/src/main/resources/application.properties:
+    line7: spring.datasource.password=Ercoo309 to spring.datasource.password=YourPasswordHere
+    ```
+3. Start pgAdmin and connect to PostgreSQL12 server by entering your password. Now you are going to create the database. For this right-click on Databases and select create -> Database... After that you type in a name for your database and save it. Update your application.properties file like this:
 
-```
-Give the example
-```
+    ```
+    line5: spring.datasource.url=jdbc:postgresql://localhost:5432/YourDatabaseNameHere
+    ```
+You are done with setting up your database! Next we have to Install JDK and Maven to run our application. Lets go Ahead:
+1. Downloand Maven: http://maven.apache.org/download.cgi
+2. And follow this tutorial: https://mkyong.com/maven/how-to-install-maven-in-windows/
+3. Download Java: https://www.oracle.com/de/java/technologies/javase-downloads.html
+4. And follow the instructions on the same website.
 
-And repeat
+There is nothing else needed to run now our Spring Boot application. Based on your IDE you can start now your application, and it should run successfully. Before I recommend to update Maven project by Maven -> update project, so that all required dependencies and resources are downloaded. 
 
-```
-until finished
-```
+## Test api with Postman
 
-End with an example of getting some data out of the system or using it for a little demo
+Download Postman: https://www.postman.com/downloads/
 
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+Use my postman collection for testing the applicaton. Open Postman, click on import and add this link: https://www.getpostman.com/collections/b36e14d94b1ad6792256 . Now you can test the api.
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+To deploy this application on a server there are many provider, who could handle this for you. For Example you can do this by using [Heroku](https://devcenter.heroku.com/articles/deploying-spring-boot-apps-to-heroku).
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
 * [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
-## Contributing
-
-Please read [CONTRIBUTING.md]for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+I use Git and the GUI TortoiseGit for versioning. For the versions available, see the [tags on this repository](https://github.com/ECN28/Tradilianz/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [](https://github.com/)
+* **Ercan Yildiz** 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - Free Software, Hell Yeah!
 
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+## Todos
+- Writing Tests
+- Add shopping cart, retailer, products and many other stuff..
