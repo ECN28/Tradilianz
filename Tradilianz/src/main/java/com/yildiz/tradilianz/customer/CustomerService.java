@@ -75,6 +75,8 @@ public class CustomerService {
 		if (customer == null) {
 			throw new CustomerNotFoundException(id);
 		} else {
+			customer.setUsername(customerDTO.getUsername());
+			customer.setPassword(customerDTO.getPassword());
 			customer.setSurname(customerDTO.getSurname());
 			customer.setGivenName(customerDTO.getGivenName());
 			customer.setBalance(customerDTO.getBalance());
@@ -84,6 +86,7 @@ public class CustomerService {
 			customer.setPhoneNumber(customerDTO.getPhoneNumber());
 			customer.setPostalCode(customerDTO.getPostalCode());
 			customer.setStreetAddress(customerDTO.getStreetAddress());
+			customer.setRole(customerDTO.getRole());
 			customerRepository.save(customer); // ruft em.merge(entity) auf, da entity bereits existiert
 			// Abrufen der gespeicherten Entity und Umwandlung in DTO
 			CustomerDTO responseCustomer = convertToDto(customer);

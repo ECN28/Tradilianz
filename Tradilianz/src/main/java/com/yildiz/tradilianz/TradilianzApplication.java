@@ -7,9 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.yildiz.tradilianz.auth.ERole;
-import com.yildiz.tradilianz.auth.Role;
-import com.yildiz.tradilianz.auth.RoleRepository;
 import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
 import com.yildiz.tradilianz.customer.CustomerService;
@@ -28,9 +25,9 @@ public class TradilianzApplication {
 		return (args) -> {
 			// save few customers
 			repository.save(new Customer("Jen300", "MySecretPass","Jennifer", "Lopez", "24.07.1969", "unknown", "New York City", "10100",
-					"JenniferLopezNYC@gmail.com", "-", 91500252.34, 2000));
+					"JenniferLopezNYC@gmail.com", "-", 91500252.34, 2000, "ROLE_CUSTOMER"));
 			repository.save(new Customer("ECN2828", "Ercoo309","Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x", "Leipzig", "04205",
-					"ercan_xxx@hotmail.de", "0176217xxxx", 6.50, 10));
+					"ercan_xxx@hotmail.de", "0176217xxxx", 6.50, 10,"ROLE_CUSTOMER"));
 
 			try {
 				// fetch all customers
@@ -78,17 +75,4 @@ public class TradilianzApplication {
 		};
 	}
 	
-	@Bean
-	public CommandLineRunner insertRoles(RoleRepository roleRepository) {
-		return (args) -> {
-			log.info("Insert Roles into Table");
-			Role role1 = roleRepository.save(new Role(ERole.ROLE_USER));
-			Role role2 = roleRepository.save(new Role(ERole.ROLE_MODERATOR));
-			Role role3 = roleRepository.save(new Role(ERole.ROLE_ADMIN));
-			log.info("Role"+ role1.getId()+": "+role1.getName());
-			log.info("Role"+ role2.getId()+": "+role2.getName());
-			log.info("Role"+ role3.getId()+": "+role3.getName());
-		};
-	}
-
 }

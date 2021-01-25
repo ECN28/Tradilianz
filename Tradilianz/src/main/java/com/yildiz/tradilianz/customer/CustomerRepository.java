@@ -23,12 +23,17 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 	/*
 	 * Here we can create our custom search queries on CustomerRepository
 	 */
+	Customer findByUsername(String username);
 
 	List<Customer> findBySurname(String surname);
 
 	Customer findById(long id);
 
 	Customer findByEmail(String email);
+	
+	Boolean existsByUsername(String username);
+	
+	Boolean existsByEmail(String email);
 
 	/*
 	 * //Update Customer workaround email field ConstraintViolationException

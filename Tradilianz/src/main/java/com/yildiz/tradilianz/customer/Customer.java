@@ -18,7 +18,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.yildiz.tradilianz.auth.Role;
+import com.yildiz.tradilianz.auth.ERole;
+
 
 @Entity
 public class Customer {
@@ -47,16 +48,14 @@ public class Customer {
 	private Timestamp timestamp;
 	private Double balance;
 	private Integer bonuspoints;
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "customer_roles", joinColumns = @JoinColumn(name = "customer_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<>();
+	private String role;
 
 	protected Customer() {
 
 	}
 
 	public Customer(String username,String password, String givenName, String surname, String birthday, String streetAddress, String city,
-			String postalCode, String email, String phoneNumber, Double balance, Integer bonuspoints) {
+			String postalCode, String email, String phoneNumber, Double balance, Integer bonuspoints, String role) {
 		this.username = username;
 		this.password = password;
 		this.givenName = givenName;
@@ -69,6 +68,7 @@ public class Customer {
 		this.phoneNumber = phoneNumber;
 		this.balance = balance;
 		this.bonuspoints = bonuspoints;
+		this.role = role;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class Customer {
 		return ("Benutzername: "+username+ "Passwort: "+password+ "Vorname: " + givenName + " Nachname: " + surname +
 				" Geburtstag: " + birthday + " Straße: "+ streetAddress + " Stadt: " + city + " Postleitzahl: " +
 				postalCode + " E-Mail-Adresse: " + email+ " Telefonnummer: " + phoneNumber + "Kontostand: " + balance +
-				" Bonuspunkte: " + bonuspoints);
+				" Bonuspunkte: " + bonuspoints+" Rolle:"+role);
 	}
 	public String getUsername() {
 		return username;
@@ -134,10 +134,11 @@ public class Customer {
 		return balance;
 	}
 	
-	public Set<Role> getRoles() {
-		return roles;
+	public String getRole() {
+		return role;
 	}
 	
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -186,9 +187,8 @@ public class Customer {
 		this.bonuspoints = bonuspoints;
 	}
 	
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	public void setRole(String role) {
+		this.role = role;
 	}
-
 
 }

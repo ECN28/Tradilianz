@@ -10,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 /*
@@ -22,6 +24,8 @@ import lombok.Data;
 public class CustomerDTO {
 
 	private Long id;
+	private String username;
+	private String password;
 	@NotBlank
 	private String givenName;
 	@NotBlank
@@ -37,4 +41,5 @@ public class CustomerDTO {
 	private Timestamp timestamp;
 	private Double balance;
 	private Integer bonuspoints;
+	private String role;
 }

@@ -1,7 +1,7 @@
 package com.yildiz.tradilianz.auth;
 
 public enum ERole {
-	ROLE_USER,
-	ROLE_MODERATOR,
+	ROLE_CUSTOMER,
+	ROLE_RETAILER,
 	ROLE_ADMIN
 }
