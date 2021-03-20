@@ -1,7 +1,6 @@
 package com.yildiz.tradilianz.security.services;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,18 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.yildiz.tradilianz.customer.Customer;
-import com.yildiz.tradilianz.customer.CustomerDTO;
 import com.yildiz.tradilianz.customer.CustomerRepository;
-import com.yildiz.tradilianz.exception.CustomerNotFoundException;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	CustomerRepository customerRepository;
-
-	@Autowired
-	CustomerDTO customerDTO;
+	
+	private CustomerRepository customerRepository;
+	
+    public UserDetailsServiceImpl(CustomerRepository customerRepository) {
+		this.customerRepository = customerRepository;
+	}
 
 	@Override
 	@Transactional

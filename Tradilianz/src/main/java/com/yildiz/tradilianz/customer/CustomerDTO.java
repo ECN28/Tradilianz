@@ -3,14 +3,9 @@ package com.yildiz.tradilianz.customer;
 import java.sql.Timestamp;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 

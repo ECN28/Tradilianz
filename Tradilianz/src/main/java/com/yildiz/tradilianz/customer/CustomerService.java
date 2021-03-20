@@ -6,7 +6,6 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yildiz.tradilianz.exception.CustomerNotFoundException;
@@ -15,14 +14,16 @@ import com.yildiz.tradilianz.exception.NoDataFoundException;
 @Service
 public class CustomerService {
 
-	@Autowired
 	private CustomerRepository customerRepository;
-
-	@Autowired
 	private CustomerDTO customerDTO;
-
-	@Autowired
 	private ModelMapper modelMapper;
+	
+	public CustomerService(CustomerRepository customerRepository, CustomerDTO customerDTO, ModelMapper modelMapper) {
+		this.customerRepository = customerRepository;
+		this.customerDTO = customerDTO;
+		this.modelMapper = modelMapper;
+	}
+	
 
 	private final Logger log = LoggerFactory.getLogger(CustomerService.class);
 

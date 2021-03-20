@@ -1,10 +1,6 @@
 package com.yildiz.tradilianz.auth;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.internal.util.Iterables;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,20 +21,21 @@ import com.yildiz.tradilianz.security.services.CustomerDetailsImpl;
 @Service
 public class AuthService {
 
-	@Autowired
-	AuthenticationManager authenticationManager;
+	private AuthenticationManager authenticationManager;
+	private CustomerRepository customerRepository;
+	private PasswordEncoder encoder;
+	private JwtUtils jwtUtils;
+	private CustomerService customerService;
 
-	@Autowired
-	CustomerRepository customerRepository;
+	public AuthService(AuthenticationManager authenticationManager, CustomerRepository customerRepository,
+			PasswordEncoder encoder, JwtUtils jwtUtils, CustomerService customerService) {
 
-	@Autowired
-	PasswordEncoder encoder;
-
-	@Autowired
-	JwtUtils jwtUtils;
-
-	@Autowired
-	CustomerService customerService;
+		this.authenticationManager = authenticationManager;
+		this.customerRepository = customerRepository;
+		this.encoder = encoder;
+		this.jwtUtils = jwtUtils;
+		this.customerService = customerService;
+	}
 
 	public ResponseEntity<Object> loginUser(LoginRequest loginRequest) {
 		Authentication authentication;
@@ -66,8 +63,8 @@ public class AuthService {
 		CustomerDetailsImpl userDetails = (CustomerDetailsImpl) authentication.getPrincipal();
 		String role = Iterables.getElement(userDetails.getAuthorities(), 0).toString();
 
-		return ResponseEntity.ok(
-				new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), role));
+		return ResponseEntity
+				.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), role));
 
 	}
 
@@ -84,7 +81,8 @@ public class AuthService {
 		customerDTO.setPassword(encoder.encode(customerDTO.getPassword()));
 		customerDTO.setRole("ROLE_CUSTOMER");
 		CustomerDTO savedCustomer = customerService.saveCustomer(customerDTO);
-		return ResponseEntity.ok(new MessageResponse("User "+customerDTO.getUsername()+" registered successfully!"));
+		return ResponseEntity
+				.ok(new MessageResponse("User " + customerDTO.getUsername() + " registered successfully!"));
 
 	}
 

@@ -1,6 +1,5 @@
 package com.yildiz.tradilianz.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,17 +26,19 @@ import com.yildiz.tradilianz.security.services.UserDetailsServiceImpl;
 		 */
 		prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
-	UserDetailsServiceImpl userDetailsService;
 	
-	@Autowired
+	
+	private UserDetailsServiceImpl userDetailsService;
 	private AuthEntryPointJwt unauthorizedHandler;
+	private AuthTokenFilter authenticationJwtTokenFilter;
 	
-	@Bean
-	public AuthTokenFilter authenticationJwtTokenFilter() {
-		return new AuthTokenFilter();
+	public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler,
+			AuthTokenFilter authenticationJwtTokenFilter) {
+		this.userDetailsService = userDetailsService;
+		this.unauthorizedHandler = unauthorizedHandler;
+		this.authenticationJwtTokenFilter = authenticationJwtTokenFilter;
 	}
-	
+
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -64,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/auth/**").permitAll()
 			.anyRequest().authenticated();
 		
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 	
 
