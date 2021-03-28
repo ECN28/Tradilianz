@@ -2,6 +2,7 @@ package com.yildiz.tradilianz.customer;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/customers")
+	@PreAuthorize("hasRole('ROLE_RERTAILER')")
 	public List<CustomerDTO> allCustomer() {
 		return customerService.findAll();
 	}

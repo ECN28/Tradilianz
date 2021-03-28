@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -34,6 +35,7 @@ public class Customer {
 	private String streetAddress;
 	private String city;
 	private String postalCode;
+	@Email
 	@Column(updatable = false, nullable = false)
 	private String email;
 	private String phoneNumber;
@@ -66,9 +68,9 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return ("Benutzername: "+username+ "Passwort: "+password+ "Vorname: " + givenName + " Nachname: " + surname +
+		return ("Benutzername: "+username+ " Passwort: "+password+ " Vorname: " + givenName + " Nachname: " + surname +
 				" Geburtstag: " + birthday + " Straße: "+ streetAddress + " Stadt: " + city + " Postleitzahl: " +
-				postalCode + " E-Mail-Adresse: " + email+ " Telefonnummer: " + phoneNumber + "Kontostand: " + balance +
+				postalCode + " E-Mail-Adresse: " + email+ " Telefonnummer: " + phoneNumber + " Kontostand: " + balance +
 				" Bonuspunkte: " + bonuspoints+" Rolle:"+role);
 	}
 	public String getUsername() {
