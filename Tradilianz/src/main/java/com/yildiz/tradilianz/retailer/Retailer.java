@@ -1,15 +1,20 @@
 package com.yildiz.tradilianz.retailer;
 
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -19,10 +24,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.yildiz.tradilianz.product.Product;
 
 @Entity
+@Table(name = "retailers")
 public class Retailer {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank
 	@Size(max = 30)
@@ -37,17 +43,18 @@ public class Retailer {
 	private String phoneNumber;
 	@CreationTimestamp
 	private Timestamp timestamp;
-	@Column(name="productList")
-	@ManyToMany(cascade = CascadeType.PERSIST)
-	private List<Product> productList;
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@JoinTable(name = "retailers_products", joinColumns = {
+			@JoinColumn(name = "retailer_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
+					@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false, updatable = false) })
+	private Set<Product> products = new HashSet<>();
 
-	protected Retailer() {
+	public Retailer() {
 
 	}
 
-	public Retailer(@NotBlank @Size(max = 30) String name, String streetAddress, String postalCode,
-			String city, @Email String email, @Size(max = 60) String password, String phoneNumber, 
-			List<Product> productsList) {
+	public Retailer(String name, String streetAddress, String postalCode, String city, String email, String password,
+			String phoneNumber) {
 		this.name = name;
 		this.streetAddress = streetAddress;
 		this.postalCode = postalCode;
@@ -55,7 +62,6 @@ public class Retailer {
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
-		this.productList = productsList;
 	}
 
 	public Long getId() {
@@ -130,12 +136,35 @@ public class Retailer {
 		this.timestamp = timestamp;
 	}
 
-	public List<Product> getProductsList() {
-		return productList;
+	public Set<Product> getProducts() {
+		return products;
 	}
 
-	public void setProductsList(List<Product> productsList) {
-		this.productList = productsList;
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		Retailer retailer = (Retailer) o;
+		return id.equals(retailer.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return (" Händlernr: " + id + " Händlername: " + name + " Straße: " + streetAddress + " Postleitzahl: "
+				+ postalCode + " Stadt: " + city + " E-Mail: " + email + " Passwort: " + password + " Telefonnummer: "
+				+ phoneNumber + " Zeitstempel+ " + timestamp);
 	}
 
 }

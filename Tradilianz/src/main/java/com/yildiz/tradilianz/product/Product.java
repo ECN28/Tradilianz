@@ -1,46 +1,49 @@
 package com.yildiz.tradilianz.product;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.yildiz.tradilianz.retailer.Retailer;
 
 @Entity
+@Table(name = "products")
 public class Product {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank
 	private String productName;
 	private String description;
-	@NotBlank
+	@NotNull
 	private Double price;
 	@NotBlank
 	private String category;
 	private String brand;
-	@ManyToMany(cascade = CascadeType.PERSIST, mappedBy = "productList")
-	private List<Retailer> retailerList;
+	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+	private Set<Retailer> retailers = new HashSet<>();
 
-	protected Product() {
+	public Product() {
 
 	}
 
-	public Product( String productName, String description, Double price, String category, String brand,
-			List<Retailer> retailerList) {
+	public Product(String productName, String description, Double price, String category, String brand) {
 		this.productName = productName;
 		this.description = description;
 		this.price = price;
 		this.category = category;
 		this.brand = brand;
-		this.retailerList = retailerList;
 	}
 
 	public Long getId() {
@@ -91,12 +94,34 @@ public class Product {
 		this.brand = brand;
 	}
 
-	public List<Retailer> getRetailerList() {
-		return retailerList;
+	public Set<Retailer> getRetailers() {
+		return retailers;
 	}
 
-	public void setRetailerList(List<Retailer> retailerList) {
-		this.retailerList = retailerList;
+	public void setRetailers(Set<Retailer> retailers) {
+		this.retailers = retailers;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		Product product = (Product) o;
+		return id.equals(product.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public String toString() {
+		return ("Produktnr: " + id + " Produktname: " + productName + " Produktbeschreibung: " + description
+				+ " Kategorie: " + category + " Preis: " + price + " Marke: " + brand);
 	}
 
 }
