@@ -5,5 +5,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RetailerRepository extends PagingAndSortingRepository<Retailer, Long> {
+	
+	Retailer findByName(String name);
+	
 
 }

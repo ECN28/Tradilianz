@@ -118,6 +118,9 @@ public class MyRunner implements CommandLineRunner {
 			log.info(productRepo.findById(3L).get().toString());
 			log.info(productRepo.findById(4L).get().toString());
 			log.info(productRepo.findById(5L).get().toString());
+			
+			//fetch all products greather than 20€
+			log.info(productRepo.findBypriceGreaterThan(20.00).toString());
 
 		} catch (NullPointerException ex) {
 			log.info(ex.getMessage());
