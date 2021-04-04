@@ -1,6 +1,5 @@
 package com.yildiz.tradilianz.product;
 
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -12,12 +11,13 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
 
 	Product findByproductName(String productName);
-	Optional<Set<Product>> findBypriceGreaterThan(double price);
+	Set<Product> findBypriceGreaterThan(double price);
+	Set<Product> findBypriceBetween(double startPrice, double endPrice);
+	Set<Product> findBypriceLessThan(double price);
 
 	boolean existsByproductName(String productName);
 
 	Page<Product> findAll(Pageable pageable);
 	Page<Product> findByCategory(String category, Pageable pageable);
 	
-
 }

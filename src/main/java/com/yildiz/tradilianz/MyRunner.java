@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
 import com.yildiz.tradilianz.product.Product;
+import com.yildiz.tradilianz.product.ProductDTO;
 import com.yildiz.tradilianz.product.ProductRepository;
+import com.yildiz.tradilianz.product.ProductService;
 import com.yildiz.tradilianz.retailer.Retailer;
 import com.yildiz.tradilianz.retailer.RetailerRepository;
 
@@ -24,11 +26,13 @@ public class MyRunner implements CommandLineRunner {
 	private final CustomerRepository customerRepo;
 	private final RetailerRepository retailerRepo;
 	private final ProductRepository productRepo;
+	private final ProductService productService;
 
-	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo) {
+	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo, ProductService productService) {
 		this.customerRepo = customerRepo;
 		this.retailerRepo = retailerRepo;
 		this.productRepo = productRepo;
+		this.productService = productService;
 	}
 
 	@Override
@@ -98,8 +102,8 @@ public class MyRunner implements CommandLineRunner {
 			Product hose2 = new Product("Nike DamenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike");
 			Product hose3 = new Product("HoseHose", "Slim Fit Jeans von Hose", 19.99, "Jeans", "Hose");
 			Product hose4 = new Product("G&G Herrenhose", "Slim Fit Jeans von G&G", 9.99, "Jeans", "Tom Tailor");
-			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Designer Jeans", "ECN28");
-
+			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Jeans", "ECN28");
+			
 			// save products in repository
 			productRepo.saveAll(Arrays.asList(hose, hose1, hose2, hose3, hose4, hose5));
 
@@ -120,7 +124,31 @@ public class MyRunner implements CommandLineRunner {
 			log.info(productRepo.findById(5L).get().toString());
 			
 			//fetch all products greather than 20€
-			log.info(productRepo.findBypriceGreaterThan(20.00).toString());
+			log.info("Products which cost more than 20€ \n"+productRepo.findBypriceGreaterThan(20.00).toString());
+			
+			//fetch all products between 20€ and 50€
+			log.info("Products which cost between 0€ and 60€ \n"+productRepo.findBypriceBetween(0, 60.00).toString());
+			
+			//fetch all products less than 100€
+			log.info("Products which cost less than 100€ \n"+productRepo.findBypriceLessThan(100.00).toString());
+			
+			/*
+			 * Product Service
+			 */
+			
+			//get all products
+			Set<ProductDTO> productDTOs = productService.findAllProducts();
+			log.info("Product DTOs from Service \n"+productDTOs);
+			
+			//get one product by id
+			ProductDTO productDTO = productService.findOneById(2L);
+			log.info("One ProductDTO from Service \n"+productDTO);
+			ProductDTO productDTO4 = productService.findOneById(4L);
+			log.info("One ProductDTO from Service \n"+productDTO4);
+			
+			//get one product by name
+			ProductDTO productDTOname = productService.findOneByName("G&G Herrenhose");
+			log.info("One ProductDTO by Name from Service \n"+productDTOname);
 
 		} catch (NullPointerException ex) {
 			log.info(ex.getMessage());
