@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
 
-	Product findByproductName(String productName);
+	Set<Product> findByproductName(String productName);
+	Set<Product> findBycategory(String category);
 	Set<Product> findBypriceGreaterThan(double price);
 	Set<Product> findBypriceBetween(double startPrice, double endPrice);
 	Set<Product> findBypriceLessThan(double price);

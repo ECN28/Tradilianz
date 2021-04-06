@@ -60,8 +60,6 @@ public class CustomerService {
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
 			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
-			// Abrufen der gespeicherten Entity und Umwandlung in DTO, weil DTO nun weitere
-			// Werte enthält als zuvor (Id & timestamp)
 			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
 			return responseCustomer;
 		} else {

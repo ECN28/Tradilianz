@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,6 +14,7 @@ public class ProductService {
 	
 	private ModelMapper modelMapper;
 	private ProductRepository productRepo;
+	private final Logger log = LoggerFactory.getLogger(ProductService.class);
 	
 	public ProductService(ModelMapper modelMapper, ProductRepository productRepo) {
 		this.modelMapper = modelMapper;
@@ -34,10 +37,13 @@ public class ProductService {
 		return productDTO;
 	}
 	
-	public ProductDTO findOneByName(String name) {
-		Product product = productRepo.findByproductName(name);
-		ProductDTO productDTO = convertToDTO(product);
-		return productDTO;
+	public Set<ProductDTO> findByName(String name) {
+		Set<ProductDTO> productDTOs = new HashSet<>();
+		Set<Product> products = productRepo.findByproductName(name);
+		for(Product p: products) {
+			productDTOs.add(convertToDTO(p));
+		}
+		return productDTOs;
 	}
 	
 	public Set<ProductDTO> findByPriceGreaterThan(double price){
@@ -69,6 +75,33 @@ public class ProductService {
 		}
 		return productDTOSet;
 	}
+	
+	public Set<ProductDTO> findByCategory(String category){
+		Set<ProductDTO> productDTOs = new HashSet<>();
+		Set<Product> products = productRepo.findBycategory(category);
+		for(Product p: products) {
+			productDTOs.add(modelMapper.map(p, ProductDTO.class));
+		}
+		return productDTOs;
+	}
+	
+	public ProductDTO saveProduct(ProductDTO productDTO) {
+		Product saveProduct = productRepo.save(convertToEntity(productDTO));
+		return modelMapper.map(saveProduct, ProductDTO.class);
+	}
+	
+	public ProductDTO updateProduct(Long Id, ProductDTO productDTO) {
+		Product updateProduct = productRepo.save(convertToEntity(productDTO));
+		return modelMapper.map(updateProduct, ProductDTO.class);
+	}
+	
+	public void deleteProduct(Long Id) {
+		productRepo.deleteById(Id);
+		if(productRepo.findById(Id) == null) {
+			log.info("Product with id:"+Id+" successfully deleted!");
+		}
+	}
+	
 	
 	public ProductDTO convertToDTO(Product product) {
 		ProductDTO productDTO= modelMapper.map(product, ProductDTO.class);
