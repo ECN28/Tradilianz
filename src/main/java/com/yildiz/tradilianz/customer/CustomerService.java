@@ -6,6 +6,8 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.yildiz.tradilianz.exception.CustomerNotFoundException;
@@ -17,11 +19,13 @@ public class CustomerService {
 	private CustomerRepository customerRepository;
 	private CustomerDTO customerDTO;
 	private ModelMapper modelMapper;
+	private PasswordEncoder passEncoder;
 	
-	public CustomerService(CustomerRepository customerRepository, CustomerDTO customerDTO, ModelMapper modelMapper) {
+	public CustomerService(CustomerRepository customerRepository, CustomerDTO customerDTO, ModelMapper modelMapper, PasswordEncoder passEncoder) {
 		this.customerRepository = customerRepository;
 		this.customerDTO = customerDTO;
 		this.modelMapper = modelMapper;
+		this.passEncoder = passEncoder;
 	}
 	
 
@@ -59,6 +63,7 @@ public class CustomerService {
 	// Speicher einen Kunden in der Datenbank und gebe diesen zurück
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
+			customerDTO.setPassword(passEncoder.encode(customerDTO.getPassword()));
 			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
 			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
 			return responseCustomer;
@@ -85,11 +90,10 @@ public class CustomerService {
 			customer.setPhoneNumber(customerDTO.getPhoneNumber());
 			customer.setPostalCode(customerDTO.getPostalCode());
 			customer.setStreetAddress(customerDTO.getStreetAddress());
+			customer.setPassword(passEncoder.encode(customerDTO.getPassword()));
 			customer.setRole(customerDTO.getRole());
-			customerRepository.save(customer); // ruft em.merge(entity) auf, da entity bereits existiert
-			// Abrufen der gespeicherten Entity und Umwandlung in DTO
-			CustomerDTO responseCustomer = convertToDto(customer);
-			return responseCustomer;
+			Customer responseCustomer = customerRepository.save(customer);
+			return convertToDto(responseCustomer);
 		}
 	}
 

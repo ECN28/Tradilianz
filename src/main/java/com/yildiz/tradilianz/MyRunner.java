@@ -8,6 +8,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.yildiz.tradilianz.customer.Customer;
@@ -24,17 +25,19 @@ public class MyRunner implements CommandLineRunner {
 
 	private final Logger log = LoggerFactory.getLogger(MyRunner.class);
 
-	private final CustomerRepository customerRepo;
-	private final RetailerRepository retailerRepo;
-	private final ProductRepository productRepo;
-	private final ProductService productService;
+	private  CustomerRepository customerRepo;
+	private  RetailerRepository retailerRepo;
+	private  ProductRepository productRepo;
+	private  ProductService productService;
+	private PasswordEncoder passEncoder;
 
 	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo,
-			ProductService productService) {
+			ProductService productService, PasswordEncoder passEncoder) {
 		this.customerRepo = customerRepo;
 		this.retailerRepo = retailerRepo;
 		this.productRepo = productRepo;
 		this.productService = productService;
+		this.passEncoder = passEncoder;
 	}
 
 	@Override
@@ -45,9 +48,9 @@ public class MyRunner implements CommandLineRunner {
 		 */
 
 		// save few customers
-		customerRepo.save(new Customer("Jen300", "MySecretPass", "Jennifer", "Lopez", "24.07.1969", "unknown",
+		customerRepo.save(new Customer("Jen300", passEncoder.encode("MySecretPass30!"), "Jennifer", "Lopez", "24.07.1969", "unknown",
 				"New York City", "10100", "JenniferLopezNYC@gmail.com", "-", 91500252.34, 2000, "ROLE_CUSTOMER"));
-		customerRepo.save(new Customer("ECN2828", "Ercoo309", "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
+		customerRepo.save(new Customer("ECN2828",passEncoder.encode("Ercoo309"), "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
 				"Leipzig", "04205", "ercan_xxx@hotmail.de", "0176217xxxx", 6.50, 10, "ROLE_CUSTOMER"));
 		try {
 			// fetch all customers
@@ -99,12 +102,12 @@ public class MyRunner implements CommandLineRunner {
 			retailerRepo.save(retailer1);
 
 			// create some products
-			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor");
-			Product hose1 = new Product("Nike HerrenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike");
-			Product hose2 = new Product("Nike DamenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike");
-			Product hose3 = new Product("HoseHose", "Slim Fit Jeans von Hose", 19.99, "Jeans", "Hose");
-			Product hose4 = new Product("G&G Herrenhose", "Slim Fit Jeans von G&G", 9.99, "Jeans", "Tom Tailor");
-			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Jeans", "ECN28");
+			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor", 10);
+			Product hose1 = new Product("Nike HerrenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike", 15);
+			Product hose2 = new Product("Nike DamenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike", 22);
+			Product hose3 = new Product("HoseHose", "Slim Fit Jeans von Hose", 19.99, "Jeans", "Hose", 39);
+			Product hose4 = new Product("G&G Herrenhose", "Slim Fit Jeans von G&G", 9.99, "Jeans", "Tom Tailor", 29);
+			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Jeans", "ECN28", 105);
 
 			// many other products created in data.sql... --> look up classpath
 			// (src/main/resources/data.sql)!

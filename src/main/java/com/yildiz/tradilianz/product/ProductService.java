@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.yildiz.tradilianz.exception.ProductNotFoundException;
+
 @Service
 public class ProductService {
 	
@@ -96,9 +98,10 @@ public class ProductService {
 	}
 	
 	public void deleteProduct(Long Id) {
-		productRepo.deleteById(Id);
 		if(productRepo.findById(Id) == null) {
-			log.info("Product with id:"+Id+" successfully deleted!");
+			throw new ProductNotFoundException(Id);
+		}else {
+			productRepo.deleteById(Id);
 		}
 	}
 	

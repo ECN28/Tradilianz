@@ -78,11 +78,10 @@ public class AuthService {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
 		}
 
-		customerDTO.setPassword(encoder.encode(customerDTO.getPassword()));
 		customerDTO.setRole("ROLE_CUSTOMER");
 		CustomerDTO savedCustomer = customerService.saveCustomer(customerDTO);
 		return ResponseEntity
-				.ok(new MessageResponse("User " + customerDTO.getUsername() + " registered successfully!"));
+				.ok(new MessageResponse(savedCustomer.toString()+ " registered successfully!"));
 
 	}
 

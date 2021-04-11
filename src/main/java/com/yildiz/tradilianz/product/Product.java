@@ -31,6 +31,7 @@ public class Product {
 	@NotBlank
 	private String category;
 	private String brand;
+	private Integer quantity;
 	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
 	private Set<Retailer> retailers = new HashSet<>();
 
@@ -38,12 +39,13 @@ public class Product {
 
 	}
 
-	public Product(String productName, String description, Double price, String category, String brand) {
+	public Product(String productName, String description, Double price, String category, String brand, Integer quantity) {
 		this.productName = productName;
 		this.description = description;
 		this.price = price;
 		this.category = category;
 		this.brand = brand;
+		this.quantity = quantity;
 	}
 
 	public Long getId() {
@@ -89,9 +91,17 @@ public class Product {
 	public String getBrand() {
 		return brand;
 	}
+	
+	public Integer getQuantity() {
+		return quantity;
+	}
 
 	public void setBrand(String brand) {
 		this.brand = brand;
+	}
+	
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
 	}
 
 	public Set<Retailer> getRetailers() {
@@ -121,7 +131,7 @@ public class Product {
 	@Override
 	public String toString() {
 		return ("Produktnr: " + id + " Produktname: " + productName + " Produktbeschreibung: " + description
-				+ " Kategorie: " + category + " Preis: " + price + " Marke: " + brand);
+				+ " Kategorie: " + category + " Preis: " + price + " Marke: " + brand+" Menge:"+quantity);
 	}
 
 }

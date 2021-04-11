@@ -1,6 +1,8 @@
 package com.yildiz.tradilianz.security.services;
 
 import org.apache.commons.validator.routines.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,34 +15,23 @@ import com.yildiz.tradilianz.customer.CustomerRepository;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	
+	private final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 	private CustomerRepository customerRepository;
-	
-    public UserDetailsServiceImpl(CustomerRepository customerRepository) {
+
+	public UserDetailsServiceImpl(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
 
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Customer user = null;
+		Customer user;
 		// Check for username or email passed through username parameter
 		boolean valid = EmailValidator.getInstance().isValid(username);
 		if (valid == false) {
-			try {
-				user = customerRepository.findByUsername(username);
-			} catch (NullPointerException e) {
-				System.out.println(e.getMessage());
-			}
-
+			user = customerRepository.findByUsername(username);
 		} else {
-			try {
-				user = customerRepository.findByEmail(username);
-
-			} catch (NullPointerException e) {
-				System.out.println(e.getMessage());
-			}
-
+			user = customerRepository.findByEmail(username);
 		}
 		return CustomerDetailsImpl.build(user);
 	}

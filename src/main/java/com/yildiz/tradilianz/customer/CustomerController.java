@@ -30,7 +30,6 @@ public class CustomerController {
 	}
 
 	@GetMapping("/customers")
-	@PreAuthorize("hasRole('ROLE_RERTAILER')")
 	public List<CustomerDTO> allCustomer() {
 		return customerService.findAll();
 	}

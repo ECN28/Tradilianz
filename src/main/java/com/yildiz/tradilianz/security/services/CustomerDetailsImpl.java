@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,7 @@ import com.yildiz.tradilianz.customer.Customer;
 public class CustomerDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
+	private final static Logger log = LoggerFactory.getLogger(CustomerDetailsImpl.class);
 	private Long id;
 
 	private String username;
@@ -40,7 +43,7 @@ public class CustomerDetailsImpl implements UserDetails {
 		try {
 			authorities.add(new SimpleGrantedAuthority(user.getRole()));
 		} catch (NullPointerException e) {
-			System.out.println(e.getMessage());
+			log.info(e.getMessage());
 		}
 		return new CustomerDetailsImpl(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(),
 				authorities);
