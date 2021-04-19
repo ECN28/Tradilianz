@@ -7,6 +7,7 @@ import java.util.Set;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.yildiz.tradilianz.exception.ProductNotFoundException;
@@ -82,7 +83,34 @@ public class ProductService {
 		Set<ProductDTO> productDTOs = new HashSet<>();
 		Set<Product> products = productRepo.findBycategory(category);
 		for(Product p: products) {
-			productDTOs.add(modelMapper.map(p, ProductDTO.class));
+			productDTOs.add(convertToDTO(p));
+		}
+		return productDTOs;
+	}
+	
+	public Set<ProductDTO> findByQuantity(Integer quantity){
+		Set<ProductDTO> productDTOs= new HashSet<>();
+		Set<Product> products = productRepo.findByquantity(quantity);
+		for(Product p: products) {
+			productDTOs.add(convertToDTO(p));
+		}
+		return productDTOs;
+	}
+	
+	public Set<ProductDTO> findByQuantityGreaterThan(Integer quantity){
+		Set<ProductDTO> productDTOs= new HashSet<>();
+		Set<Product> products = productRepo.findByquantityGreaterThan(quantity);
+		for(Product p: products) {
+			productDTOs.add(convertToDTO(p));
+		}
+		return productDTOs;
+	}
+	
+	public Set<ProductDTO> findByQuantityLessThan(Integer quantity){
+		Set<ProductDTO> productDTOs= new HashSet<>();
+		Set<Product> products = productRepo.findByquantityLessThan(quantity);
+		for(Product p: products) {
+			productDTOs.add(convertToDTO(p));
 		}
 		return productDTOs;
 	}
@@ -93,15 +121,19 @@ public class ProductService {
 	}
 	
 	public ProductDTO updateProduct(Long Id, ProductDTO productDTO) {
+		productDTO.setId(Id);
 		Product updateProduct = productRepo.save(convertToEntity(productDTO));
 		return modelMapper.map(updateProduct, ProductDTO.class);
 	}
 	
 	public void deleteProduct(Long Id) {
-		if(productRepo.findById(Id) == null) {
+		
+		try {
+			productRepo.findById(Id);
+			productRepo.deleteById(Id);			
+		}catch(EmptyResultDataAccessException ex) {
+			log.info(ex.getMessage());
 			throw new ProductNotFoundException(Id);
-		}else {
-			productRepo.deleteById(Id);
 		}
 	}
 	

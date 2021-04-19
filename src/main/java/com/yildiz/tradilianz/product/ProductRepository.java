@@ -15,6 +15,9 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, L
 	Set<Product> findBypriceGreaterThan(double price);
 	Set<Product> findBypriceBetween(double startPrice, double endPrice);
 	Set<Product> findBypriceLessThan(double price);
+	Set<Product> findByquantity(Integer quantity);
+	Set<Product> findByquantityGreaterThan(Integer quantity);
+	Set<Product> findByquantityLessThan(Integer quantity);
 
 	boolean existsByproductName(String productName);
 

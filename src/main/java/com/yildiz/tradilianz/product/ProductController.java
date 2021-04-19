@@ -30,34 +30,49 @@ public class ProductController {
 		return productService.findAllProducts();
 	}
 	
-	@GetMapping(value = "/products/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ProductDTO getOneProduct(@PathVariable("id") Long Id) {
 		return productService.findOneById(Id);
 	}
 	
-	@GetMapping(value = "/products/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Set<ProductDTO> getOneProductByName(@PathVariable("name") String name){
+	@GetMapping(value = "/products", params = "name",  produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getOneProductByName(@RequestParam(name ="name", required = true) String name){
 		return productService.findByName(name);
 	}
 	
-	@GetMapping(value = "/products/category/{category}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Set<ProductDTO> getAllProductsByCategory(@PathVariable("category") String category){
+	@GetMapping(value = "/products", params = "category",  produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsByCategory(@RequestParam(name = "category", required = true) String category){
 		return productService.findByCategory(category);
 	}
 	
-	@GetMapping(value="/products/priceBetween", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/products", params = {"startPrice", "endPrice"}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Set<ProductDTO> getAllProductsBetweenPrice(@RequestParam(name = "startPrice", required = true) Double startPrice, @RequestParam(name ="endPrice", required = true) Double endPrice){
 		return productService.findByPriceBetween(startPrice, endPrice);
 	}
 	
-	@GetMapping(value="/products/priceLess", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Set<ProductDTO> getAllProductsLessThanPrice(@RequestParam(name="price", required = true) Double price){
-		return productService.findByPriceLessThan(price);
+	@GetMapping(value="/products", params = "priceLess", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsLessThanPrice(@RequestParam(name="priceLess", required = true) Double priceLess){
+		return productService.findByPriceLessThan(priceLess);
 	}
 	
-	@GetMapping(value="/products/priceGreater", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Set<ProductDTO> getAllProductsGreaterThanPrice(@RequestParam(name="price", required = true) Double price){
-		return productService.findByPriceGreaterThan(price);
+	@GetMapping(value="/products", params = "priceGreater", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsGreaterThanPrice(@RequestParam(name="priceGreater", required = true) Double priceGreater){
+		return productService.findByPriceGreaterThan(priceGreater);
+	}
+	
+	@GetMapping(value = "/products", params ="quantity", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsByQuantity(@RequestParam(name="quantity", required = true) Integer quantity){
+		return productService.findByQuantity(quantity);
+	}
+	
+	@GetMapping(value = "/products", params ="quantityGreater", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsByQuantityGreaterThan(@RequestParam(name="quantityGreater", required = true) Integer quantityGreater){
+		return productService.findByQuantityGreaterThan(quantityGreater);
+	}
+	
+	@GetMapping(value = "/products", params ="quantityLess", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Set<ProductDTO> getAllProductsByQuantityLessThan(@RequestParam(name="quantityLess", required = true) Integer quantityLess){
+		return productService.findByQuantityLessThan(quantityLess);
 	}
 	
 	@PostMapping(value="/products", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,9 +86,9 @@ public class ProductController {
 	}
 	
 	@DeleteMapping(value="/products/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Long> deleteProduct(@PathVariable("id") Long id){
+	public ResponseEntity<String> deleteProduct(@PathVariable("id") Long id){
 		productService.deleteProduct(id);
-		return new ResponseEntity<>(id, HttpStatus.OK);
+		return new ResponseEntity<>("Product with id:"+id+"successfully deleted!", HttpStatus.OK);
 	}
 	
 }

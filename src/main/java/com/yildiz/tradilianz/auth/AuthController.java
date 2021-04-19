@@ -14,7 +14,7 @@ import com.yildiz.tradilianz.customer.CustomerDTO;;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/auth/customer")
+@RequestMapping("/auth/customers")
 public class AuthController {
 
 	private AuthService authService;
