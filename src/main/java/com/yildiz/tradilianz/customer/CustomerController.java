@@ -2,6 +2,7 @@ package com.yildiz.tradilianz.customer;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,27 +30,27 @@ public class CustomerController {
 		this.customerService = customerService;
 	}
 
-	@GetMapping("/customers")
+	@GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE )
 	public List<CustomerDTO> allCustomer() {
 		return customerService.findAll();
 	}
 
-	@GetMapping("/customers/{id}")
+	@GetMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
 	public CustomerDTO oneCustomer(@PathVariable("id") long id) {
 		return customerService.findOneById(id);
 	}
 
-	@PostMapping("/customers")
+	@PostMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE )
 	public CustomerDTO addCustomer(@Validated @RequestBody CustomerDTO customerDTO) throws Exception {
 		return customerService.saveCustomer(customerDTO);
 	}
 
-	@PutMapping("/customers/{id}")
+	@PutMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
 	public CustomerDTO updateCustomer(@PathVariable("id") long id, @Validated @RequestBody CustomerDTO customerDTO) {
 		return customerService.updateCustomer(id, customerDTO);
 	}
 
-	@DeleteMapping("/customers/{id}")
+	@DeleteMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
 	public void deleteCustomer(@PathVariable("id") long id) {
 		customerService.deleteCustomer(id);
 	}

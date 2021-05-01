@@ -121,15 +121,19 @@ public class ProductService {
 	}
 	
 	public ProductDTO updateProduct(Long Id, ProductDTO productDTO) {
-		productDTO.setId(Id);
-		Product updateProduct = productRepo.save(convertToEntity(productDTO));
-		return modelMapper.map(updateProduct, ProductDTO.class);
+		if(productRepo.findById(Id) == null) {
+			throw new ProductNotFoundException(Id);
+		}else {
+			productDTO.setId(Id);
+			Product updateProduct = productRepo.save(convertToEntity(productDTO));
+			return modelMapper.map(updateProduct, ProductDTO.class);
+		}
+
 	}
 	
 	public void deleteProduct(Long Id) {
 		
 		try {
-			productRepo.findById(Id);
 			productRepo.deleteById(Id);			
 		}catch(EmptyResultDataAccessException ex) {
 			log.info(ex.getMessage());

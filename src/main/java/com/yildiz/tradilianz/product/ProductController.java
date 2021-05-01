@@ -2,7 +2,6 @@ package com.yildiz.tradilianz.product;
 
 import java.util.Set;
 
-import org.hibernate.engine.spi.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

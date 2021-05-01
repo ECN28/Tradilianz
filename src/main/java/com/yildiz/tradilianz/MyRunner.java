@@ -100,6 +100,11 @@ public class MyRunner implements CommandLineRunner {
 			// save retailers
 			retailerRepo.save(retailer);
 			retailerRepo.save(retailer1);
+			
+			//fetch retailers
+			
+			Retailer savedRetailer = retailerRepo.findByname("ECN28 Store");
+			log.info("Hier wird geprüft, ob findByname funktioniert!: "+savedRetailer);
 
 			// create some products
 			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor", 10);
