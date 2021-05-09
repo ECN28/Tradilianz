@@ -117,7 +117,7 @@ public class ProductService {
 	
 	public ProductDTO saveProduct(ProductDTO productDTO) {
 		Product saveProduct = productRepo.save(convertToEntity(productDTO));
-		return modelMapper.map(saveProduct, ProductDTO.class);
+		return convertToDTO(saveProduct);
 	}
 	
 	public ProductDTO updateProduct(Long Id, ProductDTO productDTO) {
@@ -126,7 +126,7 @@ public class ProductService {
 		}else {
 			productDTO.setId(Id);
 			Product updateProduct = productRepo.save(convertToEntity(productDTO));
-			return modelMapper.map(updateProduct, ProductDTO.class);
+			return convertToDTO(updateProduct);
 		}
 
 	}

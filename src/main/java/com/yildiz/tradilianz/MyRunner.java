@@ -1,9 +1,12 @@
 package com.yildiz.tradilianz;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,11 @@ import org.springframework.stereotype.Component;
 
 import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
+import com.yildiz.tradilianz.order.Order;
+import com.yildiz.tradilianz.order.OrderDTO;
+import com.yildiz.tradilianz.order.OrderRepository;
+import com.yildiz.tradilianz.order.OrderService;
+import com.yildiz.tradilianz.order.OrderStatus;
 import com.yildiz.tradilianz.product.Product;
 import com.yildiz.tradilianz.product.ProductDTO;
 import com.yildiz.tradilianz.product.ProductRepository;
@@ -21,23 +29,28 @@ import com.yildiz.tradilianz.retailer.Retailer;
 import com.yildiz.tradilianz.retailer.RetailerRepository;
 
 @Component
+@Transactional
 public class MyRunner implements CommandLineRunner {
 
 	private final Logger log = LoggerFactory.getLogger(MyRunner.class);
 
-	private  CustomerRepository customerRepo;
-	private  RetailerRepository retailerRepo;
-	private  ProductRepository productRepo;
-	private  ProductService productService;
+	private CustomerRepository customerRepo;
+	private RetailerRepository retailerRepo;
+	private ProductRepository productRepo;
+	private OrderRepository orderRepo;
+	private ProductService productService;
+	private OrderService orderService;
 	private PasswordEncoder passEncoder;
 
 	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo,
-			ProductService productService, PasswordEncoder passEncoder) {
+			OrderRepository orderRepo, ProductService productService, OrderService orderService, PasswordEncoder passEncoder) {
 		this.customerRepo = customerRepo;
 		this.retailerRepo = retailerRepo;
 		this.productRepo = productRepo;
 		this.productService = productService;
+		this.orderService = orderService;
 		this.passEncoder = passEncoder;
+		this.orderRepo = orderRepo;
 	}
 
 	@Override
@@ -48,10 +61,12 @@ public class MyRunner implements CommandLineRunner {
 		 */
 
 		// save few customers
-		customerRepo.save(new Customer("Jen300", passEncoder.encode("MySecretPass30!"), "Jennifer", "Lopez", "24.07.1969", "unknown",
-				"New York City", "10100", "JenniferLopezNYC@gmail.com", "-", 91500252.34, 2000, "ROLE_CUSTOMER"));
-		customerRepo.save(new Customer("ECN2828",passEncoder.encode("Ercoo309"), "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
-				"Leipzig", "04205", "ercan_xxx@hotmail.de", "0176217xxxx", 6.50, 10, "ROLE_CUSTOMER"));
+		Customer customer1 = customerRepo.save(new Customer("Jen300", passEncoder.encode("MySecretPass30!"), "Jennifer",
+				"Lopez", "24.07.1969", "New York street 33", "New York City", "10100", "JenniferLopezNYC@gmail.com", "-",
+				150944.833, 2000, "ROLE_CUSTOMER"));
+		Customer customer2 = customerRepo.save(
+				new Customer("ECN2828", passEncoder.encode("Ercoo309"), "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
+						"Leipzig", "04205", "ercan_xxx@hotmail.de", "0176217xxxx", 2240.50, 10, "ROLE_CUSTOMER"));
 		try {
 			// fetch all customers
 			log.info("-------------------------------");
@@ -93,18 +108,18 @@ public class MyRunner implements CommandLineRunner {
 
 		try {
 			// create some retailer
-			Retailer retailer = new Retailer("ECN28 Store", "Leipzigstraße33", "04109", "Leipzig",
-					"info@ecn28store.com", "mysupersecretPass", "01762938283xxx"); // offers some products
-			Retailer retailer1 = new Retailer("Sarah Fashion", "Am Haferkamp", "28307", "Bremen",
-					"info@sarahfashion.com", "mysupersecretPass", "01762938283xxx");
+			Retailer retailerECN28 = new Retailer("ECN28 Store", "Leipzigstraße33", "04109", "Leipzig",
+					"info@ecn28store.com", "mysupersecretPass", "01762938283xxx", 20880.99); // offers some products
+			Retailer retailerSarah = new Retailer("Sarah Fashion", "Am Haferkamp", "28307", "Bremen",
+					"info@sarahfashion.com", "mysupersecretPass", "01762938283xxx", 105889.93);
 			// save retailers
-			retailerRepo.save(retailer);
-			retailerRepo.save(retailer1);
-			
-			//fetch retailers
-			
+			retailerRepo.save(retailerECN28);
+			retailerRepo.save(retailerSarah);
+
+			// fetch retailers
+
 			Retailer savedRetailer = retailerRepo.findByname("ECN28 Store");
-			log.info("Hier wird geprüft, ob findByname funktioniert!: "+savedRetailer);
+			log.info("Hier wird geprüft, ob findByname funktioniert!: " + savedRetailer);
 
 			// create some products
 			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor", 10);
@@ -121,12 +136,20 @@ public class MyRunner implements CommandLineRunner {
 			productRepo.saveAll(Arrays.asList(hose, hose1, hose2, hose3, hose4, hose5));
 
 			// add products to retailer
-			Set<Product> products = new HashSet<>();
+			List<Product> products = new ArrayList<>();
 			products.addAll(Arrays.asList(hose, hose1, hose2, hose3, hose4, hose5));
-			retailer.setProducts(products);
+			retailerECN28.setProducts(products);
+
+			List<Product> products2 = new ArrayList<>();
+			Iterable<Product> product2Iterable = productRepo.findAll();
+			product2Iterable.forEach(products2::add);
+
+			retailerSarah.setProducts(products2);
+
+			retailerRepo.save(retailerSarah);
 
 			// save retailer in repo
-			retailerRepo.save(retailer);
+			retailerRepo.save(retailerECN28);
 
 			// fetch some data and print in console
 			log.info(retailerRepo.findAll().toString());
@@ -177,6 +200,50 @@ public class MyRunner implements CommandLineRunner {
 
 			// return products equal to param category
 			log.info("Product DTOs from Service in category Schuhe" + productService.findByCategory("Schuhe"));
+
+			/*
+			 * Order repository
+			 */
+
+			Order order1 = new Order("Bestellung: 100-200-01", OrderStatus.PENDING);
+			order1.setRetailer(retailerECN28);
+			order1.setCustomer(customer1);
+			List<Product> shoppingCart = new ArrayList<>();
+			List<Product> productList = retailerECN28.getProducts();
+			shoppingCart.add(productList.get(0));
+			shoppingCart.add(productList.get(1));
+			shoppingCart.add(productList.get(2));
+			shoppingCart.add(productList.get(3));
+			shoppingCart.add(productList.get(4));
+
+			// calculate total amout shoppingCart
+			double amount = 0;
+			for (Product product : shoppingCart) {
+				amount += product.getPrice();
+			}
+			order1.setAmount(amount);
+			order1.setShoppingCart(shoppingCart);
+
+			// check shoppingCart amount vs customer balance
+			if (customer1.getBalance() > amount) {
+				order1.setStatus(OrderStatus.CONFIRMED);
+				order1.setBonuspoints(10);
+			} else {
+				order1.setStatus(OrderStatus.CANCELED);
+			}
+			orderRepo.save(order1);
+			
+			log.info("Saved order"+orderRepo.findAll().toString());
+			
+			/*
+			 * OrderService Section
+			 */
+			
+			List<OrderDTO> orderDTOs = orderService.getAllOrders();
+			log.info("OrderDTOs: "+orderDTOs.toString());
+			log.info("find order by customer: "+orderRepo.findBycustomerId(1L).toString());
+			log.info("find order by retailer: "+orderRepo.findByretailerId(7L).toString());
+
 
 		} catch (NoSuchElementException ex) {
 			log.info(ex.getMessage());

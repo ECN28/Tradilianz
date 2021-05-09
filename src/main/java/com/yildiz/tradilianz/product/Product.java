@@ -1,6 +1,8 @@
 package com.yildiz.tradilianz.product;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.yildiz.tradilianz.order.Order;
 import com.yildiz.tradilianz.retailer.Retailer;
 
 @Entity
@@ -34,8 +37,11 @@ public class Product {
 	private Integer quantity;
 	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
 	private Set<Retailer> retailers = new HashSet<>();
+	
+	@ManyToMany(mappedBy ="shoppingCart", fetch = FetchType.LAZY)
+	private List<Order> shoppingCart = new ArrayList<>();
 
-	public Product() {
+	protected Product() {
 
 	}
 

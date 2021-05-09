@@ -1,7 +1,9 @@
 package com.yildiz.tradilianz.retailer;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -21,6 +24,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.yildiz.tradilianz.order.Order;
 import com.yildiz.tradilianz.product.Product;
 
 @Entity
@@ -41,20 +45,24 @@ public class Retailer {
 	@Size(max = 60)
 	private String password;
 	private String phoneNumber;
+	private Double balance;
 	@CreationTimestamp
 	private Timestamp timestamp;
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "retailers_products", joinColumns = {
 			@JoinColumn(name = "retailer_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false, updatable = false) })
-	private Set<Product> products = new HashSet<>();
+	private List<Product> products = new ArrayList<>();
+	
+	@OneToMany (mappedBy="retailer")
+	private Set<Order> orders;
 
-	public Retailer() {
+	protected Retailer() {
 
 	}
 
 	public Retailer(String name, String streetAddress, String postalCode, String city, String email, String password,
-			String phoneNumber) {
+			String phoneNumber, Double balance) {
 		this.name = name;
 		this.streetAddress = streetAddress;
 		this.postalCode = postalCode;
@@ -62,6 +70,7 @@ public class Retailer {
 		this.email = email;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
+		this.balance = balance;
 	}
 
 	public Long getId() {
@@ -127,6 +136,14 @@ public class Retailer {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	
+	public Double getBalance() {
+		return balance;
+	}
+	
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
 
 	public Timestamp getTimestamp() {
 		return timestamp;
@@ -136,11 +153,11 @@ public class Retailer {
 		this.timestamp = timestamp;
 	}
 
-	public Set<Product> getProducts() {
+	public List<Product> getProducts() {
 		return products;
 	}
 
-	public void setProducts(Set<Product> products) {
+	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
 
@@ -164,7 +181,7 @@ public class Retailer {
 	public String toString() {
 		return (" Händlernr: " + id + " Händlername: " + name + " Straße: " + streetAddress + " Postleitzahl: "
 				+ postalCode + " Stadt: " + city + " E-Mail: " + email + " Passwort: " + password + " Telefonnummer: "
-				+ phoneNumber + " Zeitstempel+ " + timestamp);
+				+ phoneNumber +"Kontostand: "+balance+ " Zeitstempel+ " + timestamp);
 	}
 
 }

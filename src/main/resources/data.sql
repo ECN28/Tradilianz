@@ -34,10 +34,10 @@ INSERT INTO products (product_name, description, price, category, brand, quantit
 ('Geox Sneaker low', 'Sneaker low von Geox in der Farbe light gold Typ BLOMIEE', 71.56, 'Schuhe', 'Geox', 15),
 ('Veja Sneaker low', 'Sneaker low von Veja in der Farbe extra white Typ V-10', 124.95, 'Schuhe', 'Veja', 5);
 
-INSERT INTO retailers(name, street_address, postal_code, city, email, password, phone_number, timestamp) VALUES
-('Amakon shop', 'Am Bruehl 8', '04109', 'Leipzig', 'info@amakonshop.com', 'MySecretPass3928', '0341844888', CURRENT_TIMESTAMP(3)),
-('Balando', 'Am Bruehl 12', '04109', 'Leipzig', 'info@balondo.com', 'MySecretPass39338', '0341844899', CURRENT_TIMESTAMP(3)),
-('Dampf shop', 'Am Bruehl 33', '04109', 'Leipzig', 'info@dampfshop.com', 'MySecretPass33333', '03418448393', CURRENT_TIMESTAMP(3)),
-('Finest Fashoins shop', 'Am Bruehl 21', '04109', 'Leipzig', 'info@finestfashionsshop.com', 'MySecret500!!', '03418844884', CURRENT_TIMESTAMP(3)),
-('Sultan Style', 'Bazarstr. 33', '28307', 'Bremen', 'info@sultanstyle.com', 'MySecretPassPass30', '04214983892382', CURRENT_TIMESTAMP(3)),
-('Westside Style', 'Saarstraße', '28309', 'Bremen', 'info@westsidestyle.com', 'MySecretPass382', '0421482394', CURRENT_TIMESTAMP(3));
+INSERT INTO retailers(name, street_address, postal_code, city, email, password, phone_number,balance, timestamp) VALUES
+('Amakon shop', 'Am Bruehl 8', '04109', 'Leipzig', 'info@amakonshop.com', 'MySecretPass3928', '0341844888',2883.99, CURRENT_TIMESTAMP(3)),
+('Balando', 'Am Bruehl 12', '04109', 'Leipzig', 'info@balondo.com', 'MySecretPass39338', '0341844899',28499.00, CURRENT_TIMESTAMP(3)),
+('Dampf shop', 'Am Bruehl 33', '04109', 'Leipzig', 'info@dampfshop.com', 'MySecretPass33333', '03418448393',32599.55, CURRENT_TIMESTAMP(3)),
+('Finest Fashoins shop', 'Am Bruehl 21', '04109', 'Leipzig', 'info@finestfashionsshop.com', 'MySecret500!!', '03418844884', 84199.03, CURRENT_TIMESTAMP(3)),
+('Sultan Style', 'Bazarstr. 33', '28307', 'Bremen', 'info@sultanstyle.com', 'MySecretPassPass30', '04214983892382',5000.00, CURRENT_TIMESTAMP(3)),
+('Westside Style', 'Saarstraße', '28309', 'Bremen', 'info@westsidestyle.com', 'MySecretPass382', '0421482394', 600600.44, CURRENT_TIMESTAMP(3));

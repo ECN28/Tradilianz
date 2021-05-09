@@ -22,6 +22,7 @@ public class RetailerDTO {
 	private String email;
 	private String password;
 	private String phoneNumber;
+	private Double balance;
 	private String role;
 
 }

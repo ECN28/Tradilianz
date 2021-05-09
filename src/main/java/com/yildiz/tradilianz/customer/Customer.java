@@ -1,17 +1,21 @@
 package com.yildiz.tradilianz.customer;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.yildiz.tradilianz.order.Order;
 
 
 
@@ -19,7 +23,7 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Customer {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank
 	@Size(max = 20)
@@ -44,6 +48,9 @@ public class Customer {
 	private Double balance;
 	private Integer bonuspoints;
 	private String role;
+	
+	@OneToMany (mappedBy="customer")
+	private Set<Order> orders;
 
 	protected Customer() {
 
