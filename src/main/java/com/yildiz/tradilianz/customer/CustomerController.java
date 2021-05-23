@@ -2,8 +2,6 @@ package com.yildiz.tradilianz.customer;
 
 import java.util.List;
 
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,27 +28,27 @@ public class CustomerController {
 		this.customerService = customerService;
 	}
 
-	@GetMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE )
+	@GetMapping(value = "/customers", produces = "application/json; charset=UTF-8" )
 	public List<CustomerDTO> allCustomer() {
 		return customerService.findAll();
 	}
 
-	@GetMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
+	@GetMapping(value = "/customers/{id}", produces = "application/json; charset=UTF-8" )
 	public CustomerDTO oneCustomer(@PathVariable("id") long id) {
 		return customerService.findOneById(id);
 	}
 
-	@PostMapping(value = "/customers", produces = MediaType.APPLICATION_JSON_VALUE )
+	@PostMapping(value = "/customers", produces = "application/json; charset=UTF-8" )
 	public CustomerDTO addCustomer(@Validated @RequestBody CustomerDTO customerDTO) throws Exception {
 		return customerService.saveCustomer(customerDTO);
 	}
 
-	@PutMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
+	@PutMapping(value = "/customers/{id}", produces = "application/json; charset=UTF-8" )
 	public CustomerDTO updateCustomer(@PathVariable("id") long id, @Validated @RequestBody CustomerDTO customerDTO) {
 		return customerService.updateCustomer(id, customerDTO);
 	}
 
-	@DeleteMapping(value = "/customers/{id}", produces = MediaType.APPLICATION_JSON_VALUE )
+	@DeleteMapping(value = "/customers/{id}", produces = "application/json; charset=UTF-8" )
 	public void deleteCustomer(@PathVariable("id") long id) {
 		customerService.deleteCustomer(id);
 	}

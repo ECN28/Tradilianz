@@ -17,8 +17,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.yildiz.tradilianz.order.Order;
 
-
-
 @Entity
 public class Customer {
 
@@ -48,16 +46,17 @@ public class Customer {
 	private Double balance;
 	private Integer bonuspoints;
 	private String role;
-	
-	@OneToMany (mappedBy="customer")
+
+	@OneToMany(mappedBy = "customer")
 	private Set<Order> orders;
 
 	protected Customer() {
 
 	}
 
-	public Customer(String username,String password, String givenName, String surname, String birthday, String streetAddress, String city,
-			String postalCode, String email, String phoneNumber, Double balance, Integer bonuspoints, String role) {
+	public Customer(String username, String password, String givenName, String surname, String birthday,
+			String streetAddress, String city, String postalCode, String email, String phoneNumber, Double balance,
+			Integer bonuspoints, String role) {
 		this.username = username;
 		this.password = password;
 		this.givenName = givenName;
@@ -75,15 +74,16 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return ("Benutzername: "+username+ " Passwort: "+password+ " Vorname: " + givenName + " Nachname: " + surname +
-				" Geburtstag: " + birthday + " Straße: "+ streetAddress + " Stadt: " + city + " Postleitzahl: " +
-				postalCode + " E-Mail-Adresse: " + email+ " Telefonnummer: " + phoneNumber + " Kontostand: " + balance +
-				" Bonuspunkte: " + bonuspoints+" Rolle:"+role);
+		return ("Benutzername: " + username + " Passwort: " + password + " Vorname: " + givenName + " Nachname: "
+				+ surname + " Geburtstag: " + birthday + " Straße: " + streetAddress + " Stadt: " + city
+				+ " Postleitzahl: " + postalCode + " E-Mail-Adresse: " + email + " Telefonnummer: " + phoneNumber
+				+ " Kontostand: " + balance + " Bonuspunkte: " + bonuspoints + " Rolle:" + role);
 	}
+
 	public String getUsername() {
 		return username;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
@@ -135,16 +135,15 @@ public class Customer {
 	public Double getBalance() {
 		return balance;
 	}
-	
+
 	public String getRole() {
 		return role;
 	}
-	
 
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -182,13 +181,20 @@ public class Customer {
 	}
 
 	public void setBalance(Double balance) {
-		this.balance = balance;
+		if (balance < 0) {
+		} else {
+			this.balance = balance;
+		}
 	}
 
 	public void setBonuspoints(Integer bonuspoints) {
-		this.bonuspoints = bonuspoints;
+		if(bonuspoints < 0) {
+			
+		}else {
+			this.bonuspoints = bonuspoints;
+		}
 	}
-	
+
 	public void setRole(String role) {
 		this.role = role;
 	}

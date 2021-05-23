@@ -1,12 +1,12 @@
 package com.yildiz.tradilianz.order;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,9 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -34,16 +31,13 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String orderNumber;
-	@Column( columnDefinition="Decimal(10,2)")
+	@Column(columnDefinition = "Decimal(10,2)")
 	private Double amount;
 	private Integer bonuspoints;
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-	@JoinTable(name = "shoppingCart_products", joinColumns = {
-			@JoinColumn(name = "shoppingCart_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false, updatable = false) })
-	private List<Product> shoppingCart = new ArrayList<>();
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Map<Product, Integer> shoppingCart = new HashMap<>();
 	@CreationTimestamp
 	private Timestamp orderDate;
 	// Ein Kunde kann n Bestellungen aufgeben, eine Bestellung ist immer genau einem
@@ -58,8 +52,7 @@ public class Order {
 	protected Order() {
 	}
 
-	public Order(String orderNumber, OrderStatus status) {
-		this.orderNumber = orderNumber;
+	public Order(OrderStatus status) {
 		this.status = status;
 	}
 
@@ -72,6 +65,7 @@ public class Order {
 	}
 
 	public String getOrderNumber() {
+		orderNumber = "order_number_"+id;
 		return orderNumber;
 	}
 
@@ -103,11 +97,11 @@ public class Order {
 		this.status = status;
 	}
 
-	public List<Product> getShoppingCart() {
+	public Map<Product, Integer> getShoppingCart() {
 		return shoppingCart;
 	}
 
-	public void setShoppingCart(List<Product> shoppingCart) {
+	public void setShoppingCart(Map<Product, Integer> shoppingCart) {
 		this.shoppingCart = shoppingCart;
 	}
 
@@ -134,7 +128,7 @@ public class Order {
 	public void setRetailer(Retailer retailer) {
 		this.retailer = retailer;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

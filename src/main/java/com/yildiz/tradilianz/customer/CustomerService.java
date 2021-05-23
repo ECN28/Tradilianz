@@ -6,7 +6,6 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +63,7 @@ public class CustomerService {
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
 			customerDTO.setPassword(passEncoder.encode(customerDTO.getPassword()));
+			customerDTO.setRole("ROLE_CUSTOMER");
 			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
 			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
 			return responseCustomer;

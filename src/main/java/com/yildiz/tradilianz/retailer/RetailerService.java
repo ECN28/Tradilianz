@@ -64,6 +64,7 @@ public class RetailerService {
 	public RetailerDTO save(RetailerDTO retailerDTO) {
 		if (retailerDTO != null) {
 			retailerDTO.setPassword(passwordEncoder.encode(retailerDTO.getPassword()));
+			retailerDTO.setRole("ROLE_RETAILER");
 			Retailer savedRetailer = retailerRepo.save(convertToEntity(retailerDTO));
 			return convertToDTO(savedRetailer);
 		} else {
@@ -78,6 +79,7 @@ public class RetailerService {
 		} else {
 			retailerDTO.setPassword(passwordEncoder.encode(retailerDTO.getPassword()));
 			retailerDTO.setId(id);
+			retailerDTO.setRole("ROLE_RETAILER");
 			Retailer retailer = convertToEntity(retailerDTO);
 			retailerRepo.save(retailer);
 			return retailerDTO;

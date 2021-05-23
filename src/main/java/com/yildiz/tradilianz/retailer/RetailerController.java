@@ -2,7 +2,6 @@ package com.yildiz.tradilianz.retailer;
 
 import java.util.Set;
 
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,37 +21,37 @@ public class RetailerController {
 		this.retailerService = retailerService;
 	}
 	
-	@GetMapping(value = "/retailers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/retailers", produces = "application/json; charset=UTF-8")
 	public Set<RetailerDTO> getAllRetailers (){
 		return retailerService.findAll();
 	}
 	
-	@GetMapping(value = "/retailers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/retailers/{id}", produces = "application/json; charset=UTF-8")
 	public RetailerDTO getOneRetailer(@PathVariable("id") Long id) {
 		return retailerService.findbyId(id);
 	}
 	
-	@GetMapping(value = "/retailers", params = "name", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/retailers", params = "name", produces = "application/json; charset=UTF-8")
 	public RetailerDTO getOneRetailerByname(@RequestParam(name = "name", required = true) String name) {
 		return retailerService.findByName(name);
 	}
 	
-	@GetMapping(value = "/retailers", params = "postalCode", produces = MediaType.APPLICATION_JSON_VALUE )
+	@GetMapping(value = "/retailers", params = "postalCode", produces = "application/json; charset=UTF-8" )
 	public Set<RetailerDTO> getAllRetailersByPostalCode(@RequestParam(name = "postalCode", required = true) String postalCode){
 		return retailerService.findByPostalCode(postalCode);
 	}
 	
-	@PutMapping(value = "/retailers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/retailers/{id}", produces = "application/json; charset=UTF-8")
 	public RetailerDTO updateRetailer(@RequestBody @Validated RetailerDTO retailerDTO, @PathVariable("id") Long id) {
 		return retailerService.update(retailerDTO, id);
 	}
 	
-	@PostMapping(value = "/retailers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/retailers", produces = "application/json; charset=UTF-8")
 	public RetailerDTO saveRetailer(@RequestBody @Validated RetailerDTO retailerDTO) {
 		return retailerService.save(retailerDTO);
 	}
 	
-	@DeleteMapping(value = "/retailers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/retailers/{id}", produces = "application/json; charset=UTF-8")
 	public String deleteRetailer(@PathVariable("id") Long id) {
 		return retailerService.delete(id);
 	}

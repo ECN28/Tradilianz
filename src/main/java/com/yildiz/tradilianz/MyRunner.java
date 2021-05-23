@@ -2,7 +2,9 @@ package com.yildiz.tradilianz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -18,6 +20,7 @@ import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
 import com.yildiz.tradilianz.order.Order;
 import com.yildiz.tradilianz.order.OrderDTO;
+import com.yildiz.tradilianz.order.OrderDTOResponse;
 import com.yildiz.tradilianz.order.OrderRepository;
 import com.yildiz.tradilianz.order.OrderService;
 import com.yildiz.tradilianz.order.OrderStatus;
@@ -205,21 +208,21 @@ public class MyRunner implements CommandLineRunner {
 			 * Order repository
 			 */
 
-			Order order1 = new Order("Bestellung: 100-200-01", OrderStatus.PENDING);
+			Order order1 = new Order(OrderStatus.PENDING);
 			order1.setRetailer(retailerECN28);
 			order1.setCustomer(customer1);
-			List<Product> shoppingCart = new ArrayList<>();
+			Map<Product, Integer> shoppingCart = new HashMap<>();
 			List<Product> productList = retailerECN28.getProducts();
-			shoppingCart.add(productList.get(0));
-			shoppingCart.add(productList.get(1));
-			shoppingCart.add(productList.get(2));
-			shoppingCart.add(productList.get(3));
-			shoppingCart.add(productList.get(4));
+			shoppingCart.put(productList.get(0), 4);
+			shoppingCart.put(productList.get(1), 20);
+			shoppingCart.put(productList.get(2), 10);
+			shoppingCart.put(productList.get(3), 20);
+			shoppingCart.put(productList.get(4), 5);
 
 			// calculate total amout shoppingCart
 			double amount = 0;
-			for (Product product : shoppingCart) {
-				amount += product.getPrice();
+			for (Map.Entry<Product, Integer> productMap: shoppingCart.entrySet()) {
+				amount += productMap.getKey().getPrice()*productMap.getValue();
 			}
 			order1.setAmount(amount);
 			order1.setShoppingCart(shoppingCart);
@@ -231,7 +234,7 @@ public class MyRunner implements CommandLineRunner {
 			} else {
 				order1.setStatus(OrderStatus.CANCELED);
 			}
-			orderRepo.save(order1);
+			orderRepo.saveAndFlush(order1);
 			
 			log.info("Saved order"+orderRepo.findAll().toString());
 			
@@ -239,7 +242,7 @@ public class MyRunner implements CommandLineRunner {
 			 * OrderService Section
 			 */
 			
-			List<OrderDTO> orderDTOs = orderService.getAllOrders();
+			List<OrderDTOResponse> orderDTOs = orderService.getAllOrders();
 			log.info("OrderDTOs: "+orderDTOs.toString());
 			log.info("find order by customer: "+orderRepo.findBycustomerId(1L).toString());
 			log.info("find order by retailer: "+orderRepo.findByretailerId(7L).toString());
