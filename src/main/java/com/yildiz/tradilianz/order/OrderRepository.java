@@ -8,6 +8,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	
 	List<Order> findBycustomerId(Long customerId);
 	List<Order> findByretailerId(Long retailerId);
-	
-	
+	List<Order> findByamountLessThan(Double amount);
+	List<Order> findByamountGreaterThan(Double amount);
 }

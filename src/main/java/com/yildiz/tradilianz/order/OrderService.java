@@ -77,6 +77,33 @@ public class OrderService {
 		}
 		return orderDTOs;
 	}
+	
+	public List<OrderDTOResponse> getOrderByAmountLessThan(Double amount) {
+		List<Order> orderList = orderRepo.findByamountLessThan(amount);
+		if(orderList.isEmpty()) {
+			throw new OrderNotFoundException(null);
+		}
+		List<OrderDTOResponse> orderDTOList = new ArrayList<>();
+		
+		for(Order order: orderList) {
+			orderDTOList.add(convertToDTO(order));
+		}
+		return orderDTOList;
+	}
+	
+
+	public List<OrderDTOResponse> getOrderByAmountGreaterThan(Double amount) {
+		List<Order> orderList = orderRepo.findByamountGreaterThan(amount);
+		if(orderList.isEmpty()) {
+			throw new OrderNotFoundException(null);
+		}
+		List<OrderDTOResponse> orderDTOList = new ArrayList<>();
+		
+		for(Order order: orderList) {
+			orderDTOList.add(convertToDTO(order));
+		}
+		return orderDTOList;
+	}
 
 	public List<OrderDTOResponse> getOrderByRetailerId(Long id) {
 		List<OrderDTOResponse> orderDTOs = new ArrayList<>();
@@ -160,26 +187,20 @@ public class OrderService {
 		Order order = orderRepo.saveAndFlush(convertToEntity(orderDTO, retailer));
 		return convertToDTO(order);
 	}
-
-	public OrderDTOResponse updateOrder(Long id, OrderDTO orderDTO, Retailer retailer) {
-		orderDTO.setId(id);
-		Order order = convertToEntity(orderDTO, retailer);
-		if (order == null) {
-			throw new OrderNotFoundException(id);
-		} else {
-			orderRepo.save(order);
-			return convertToDTO(order);
-		}
-	}
-
-	public void deleteOrder(Long id) {
-		Order order = orderRepo.findById(id).get();
-		if (order == null) {
-			throw new OrderNotFoundException(id);
-		} else {
-			orderRepo.deleteById(id);
-		}
-	}
+	/*
+	 *  We should not allow to manipulate transactions directly! Instead I plan to make a 
+	 *  seperate api in which only "proven" request could be cancelled by transfering back the money
+	 *  to customer/retailer after products get delivered back and so on... 
+	 * 
+	 * public OrderDTOResponse updateOrder(Long id, OrderDTO orderDTO, Retailer
+	 * retailer) { orderDTO.setId(id); Order order = convertToEntity(orderDTO,
+	 * retailer); if (order == null) { throw new OrderNotFoundException(id); } else
+	 * { orderRepo.save(order); return convertToDTO(order); } }
+	 * 
+	 * public void deleteOrder(Long id) { Order order =
+	 * orderRepo.findById(id).get(); if (order == null) { throw new
+	 * OrderNotFoundException(id); } else { orderRepo.deleteById(id); } }
+	 */
 
 	// Umwandlung von DTO zu Entity Objekt
 	public Order convertToEntity(OrderDTO orderDTO, Retailer retailer) {
@@ -216,5 +237,8 @@ public class OrderService {
 		orderDTO.setShoppingCart(order.getShoppingCart());
 		return orderDTO;
 	}
+
+
+
 
 }

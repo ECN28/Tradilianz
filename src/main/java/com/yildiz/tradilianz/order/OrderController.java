@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,6 +22,16 @@ public class OrderController {
 	@GetMapping(value = "/orders", produces = "application/json; charset=UTF-8")
 	public List<OrderDTOResponse> getAllOrders() {
 		return orderService.getAllOrders();
+	}
+	
+	@GetMapping(value ="/orders", params ="amountLess", produces = "application/json; charset=UTF-8")
+	public List<OrderDTOResponse> getOrdersByAmountLessThan(@RequestParam(name="amount", required = true) Double amount){
+		return orderService.getOrderByAmountLessThan(amount);
+	}
+	
+	@GetMapping(value ="/orders", params ="amountGreater", produces = "application/json; charset=UTF-8")
+	public List<OrderDTOResponse> getOrdersByAmountGreaterThan(@RequestParam(name="amount", required = true) Double amount){
+		return orderService.getOrderByAmountGreaterThan(amount);
 	}
 
 	@GetMapping(value = "/orders/{id}", produces = "application/json; charset=UTF-8")

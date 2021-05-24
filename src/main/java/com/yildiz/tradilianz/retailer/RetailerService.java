@@ -3,6 +3,8 @@ package com.yildiz.tradilianz.retailer;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.yildiz.tradilianz.exception.RetailerNotFoundException;
 
 @Service
+@Transactional
 public class RetailerService {
 
 	private RetailerRepository retailerRepo;
