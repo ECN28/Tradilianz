@@ -2,11 +2,15 @@ package com.yildiz.tradilianz.retailer;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,15 +48,12 @@ public class Retailer {
 	@Size(max = 60)
 	private String password;
 	private String phoneNumber;
+	@Column(columnDefinition = "Decimal(10,2)")
 	private Double balance;
 	@CreationTimestamp
 	private Timestamp timestamp;
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	@JoinTable(name = "retailers_products", joinColumns = {
-			@JoinColumn(name = "retailer_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false, updatable = false) })
-	private List<Product> products = new ArrayList<>();
-	
+	@ElementCollection(fetch = FetchType.LAZY)
+	private Map<Product, Integer> offeredProducts = new HashMap<>();
 	@OneToMany (mappedBy="retailer")
 	private Set<Order> orders;
 
@@ -143,6 +144,14 @@ public class Retailer {
 	public void setBalance(Double balance) {
 		this.balance = balance;
 	}
+	
+	public Map<Product, Integer> getOfferedProducts(){
+		return offeredProducts;
+	}
+	
+	public void setOfferedProducts(Map<Product, Integer> offeredProducts) {
+		this.offeredProducts = offeredProducts;
+	}
 
 	public Timestamp getTimestamp() {
 		return timestamp;
@@ -152,13 +161,6 @@ public class Retailer {
 		this.timestamp = timestamp;
 	}
 
-	public List<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
 
 	@Override
 	public boolean equals(Object o) {

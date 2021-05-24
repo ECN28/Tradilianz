@@ -24,7 +24,7 @@ public class OrderDTO {
 	private Long retailerId;
 	private String retailerName;
 	private String retailerAddress;
-	private Map<String, Integer> shoppingCart;
+	private Map<Long, Integer> shoppingCart;
 	private Double amount;
 	private Integer bonuspoints;
 	private OrderStatus orderStatus;

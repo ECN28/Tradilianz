@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -18,6 +20,7 @@ import com.yildiz.tradilianz.customer.CustomerRepository;
 import com.yildiz.tradilianz.exception.CustomerBalanceToLowException;
 import com.yildiz.tradilianz.exception.CustomerNotFoundException;
 import com.yildiz.tradilianz.exception.OrderNotFoundException;
+import com.yildiz.tradilianz.exception.ProductNotFoundException;
 import com.yildiz.tradilianz.product.Product;
 import com.yildiz.tradilianz.product.ProductRepository;
 import com.yildiz.tradilianz.retailer.Retailer;
@@ -31,7 +34,7 @@ public class OrderService {
 	private CustomerRepository customerRepo;
 	private RetailerRepository retailerRepo;
 	private ProductRepository productRepo;
-	private  final ModelMapper modelMapper;
+	private final ModelMapper modelMapper;
 	private Logger log = LoggerFactory.getLogger(OrderService.class);
 
 	public OrderService(OrderRepository orderRepo, CustomerRepository customerRepo, RetailerRepository retailerRepo,
@@ -74,7 +77,7 @@ public class OrderService {
 		}
 		return orderDTOs;
 	}
-	
+
 	public List<OrderDTOResponse> getOrderByRetailerId(Long id) {
 		List<OrderDTOResponse> orderDTOs = new ArrayList<>();
 		List<Order> orderList = orderRepo.findByretailerId(id);
@@ -87,77 +90,93 @@ public class OrderService {
 		}
 		return orderDTOs;
 	}
-	
+
 	public OrderDTOResponse saveOrder(OrderDTO orderDTO) {
-		
+
 		Retailer retailer = retailerRepo.findByid(orderDTO.getRetailerId());
 		Customer customer = customerRepo.findById(orderDTO.getCustomerId()).get();
-		
-		//retrieve products and quantity of shoppingCart from retailer
-		Map<Product, Integer> productMap = new HashMap<>(); 
-		for(Map.Entry<String, Integer> products: orderDTO.getShoppingCart().entrySet()) {
-			productMap.put(retailer.getProducts().get(Integer.parseInt(products.getKey())) ,products.getValue());
+
+		// retrieve products and quantity of shoppingCart from retailers offered
+		// products
+		Map<Product, Integer> shoppingCart = new HashMap<>();
+		Map<Product, Integer> offeredProducts = retailer.getOfferedProducts();
+		for (Map.Entry<Long, Integer> orderShoppingCart : orderDTO.getShoppingCart().entrySet()) {
+			for (Map.Entry<Product, Integer> retailerProducts : offeredProducts.entrySet()) {
+				if (productRepo.findByid(orderShoppingCart.getKey()) == null) {
+					throw new ProductNotFoundException(orderShoppingCart.getKey());
+				}
+				Product product = productRepo.findById(orderShoppingCart.getKey()).get();
+				if (product == retailerProducts.getKey()) {
+					shoppingCart.put(retailerProducts.getKey(), orderShoppingCart.getValue());
+				}
+			}
 		}
-		
-		//calculate & and set amount
+
+		// calculate & and set amount
 		double amount = 0;
-		for(Map.Entry<Product, Integer> products: productMap.entrySet()) {
-			amount += products.getKey().getPrice()* products.getValue();
+		for (Map.Entry<Product, Integer> products : shoppingCart.entrySet()) {
+			amount += products.getKey().getPrice() * products.getValue();
 		}
 		orderDTO.setAmount(amount);
-		//check if customer balance is enough for the transaction
-		if(customer == null) {
+		// check if customer balance is enough for the transaction
+		if (customer == null) {
 			throw new CustomerNotFoundException(orderDTO.getCustomerId());
-		}else if(customer.getBalance() < amount) {
-			orderDTO.setOrderStatus(OrderStatus.CANCELED);
-			throw new CustomerBalanceToLowException(orderDTO.getCustomerId());
-		}else if(customer.getBalance() > amount) {
-			//set positive order status
+		} else if (customer.getBalance() < amount) {
+			orderDTO.setOrderStatus(OrderStatus.CANCELED); // wird nie gespeichert!
+			Order order = orderRepo.save(convertToEntity(orderDTO, retailer));
+			OrderDTOResponse orderCancelDTO = convertToDTO(order);
+			throw new CustomerBalanceToLowException(orderDTO.getCustomerId(), orderCancelDTO);
+		} else if (customer.getBalance() > amount) {
+			// set positive order status
 			orderDTO.setOrderStatus(OrderStatus.CONFIRMED);
-			//set new quantity of products in retailer inventory
-			for(Map.Entry<Product, Integer> products: productMap.entrySet()) {
-				int quantity = products.getKey().getQuantity() - products.getValue();
-				Integer i = products.getKey().getId() == null ? null : Math.toIntExact(products.getKey().getId()); //convert Long to Integer
-				retailer.getProducts().get(i).setQuantity(quantity);
+			// set new quantity of products in retailer inventory
+			for (Map.Entry<Product, Integer> retailerProducts : offeredProducts.entrySet()) {
+				for (Map.Entry<Product, Integer> orderedProducts : shoppingCart.entrySet()) {
+					if (retailerProducts.getKey() == orderedProducts.getKey()) {
+						offeredProducts.put(retailerProducts.getKey(),
+								retailerProducts.getValue() - orderedProducts.getValue());
+					}
+				}
 			}
-			//set new balance of customer & retailer
-			customer.setBalance(customer.getBalance()-amount);
-			retailer.setBalance(retailer.getBalance()+amount);
+			retailer.setOfferedProducts(offeredProducts);
+			// set new balance of customer & retailer
+			customer.setBalance(customer.getBalance() - amount);
+			retailer.setBalance(retailer.getBalance() + amount);
 		}
-		
-		//calculate & set bonuspoints
+
+		// calculate & set bonuspoints
 		int bonuspoints = 0;
-		if(amount <= 9.99) {
+		if (amount <= 9.99) {
 			bonuspoints = 0;
-		}else {
-			// 1 point for every 10€, rounded up 2.5€ -> 3 points, 2,4€ -> 2 points 
-			bonuspoints = (int) Math.round(amount/10); 
+		} else {
+			// 1 point for every 10€, rounded up 2.5€ -> 3 points, 2,4€ -> 2 points
+			bonuspoints = (int) Math.round(amount / 10);
 		}
 		orderDTO.setBonuspoints(bonuspoints);
-		customer.setBonuspoints(bonuspoints);
-		
+		customer.setBonuspoints(customer.getBonuspoints() + bonuspoints);
+
 		customerRepo.save(customer);
 		retailerRepo.save(retailer);
 		Order order = orderRepo.saveAndFlush(convertToEntity(orderDTO, retailer));
 		return convertToDTO(order);
 	}
-	
+
 	public OrderDTOResponse updateOrder(Long id, OrderDTO orderDTO, Retailer retailer) {
 		orderDTO.setId(id);
 		Order order = convertToEntity(orderDTO, retailer);
-		if(order == null) {
+		if (order == null) {
 			throw new OrderNotFoundException(id);
-		}else {
+		} else {
 			orderRepo.save(order);
 			return convertToDTO(order);
 		}
 	}
-	
+
 	public void deleteOrder(Long id) {
 		Order order = orderRepo.findById(id).get();
-		if(order == null) {
+		if (order == null) {
 			throw new OrderNotFoundException(id);
-		}else {
+		} else {
 			orderRepo.deleteById(id);
 		}
 	}
@@ -165,16 +184,22 @@ public class OrderService {
 	// Umwandlung von DTO zu Entity Objekt
 	public Order convertToEntity(OrderDTO orderDTO, Retailer retailer) {
 		TypeMap<OrderDTO, Order> typeMap = modelMapper.getTypeMap(OrderDTO.class, Order.class);
-		if (typeMap == null) { // if not  already added
+		if (typeMap == null) { // if not already added
 			modelMapper.addMappings(new OrderMap());
 		}
 		Order order = modelMapper.map(orderDTO, Order.class);
-		//retrieve products and quantity of shoppingCart from retailer
-		Map<Product, Integer> productMap = new HashMap<>(); 
-		for(Map.Entry<String, Integer> products: orderDTO.getShoppingCart().entrySet()) {
-			productMap.put(retailer.getProducts().get(Integer.parseInt(products.getKey())) ,products.getValue());
+		// retrieve products and quantity of shoppingCart from retailer
+		Map<Product, Integer> shoppingCart = new HashMap<>();
+		Map<Product, Integer> offeredProducts = retailer.getOfferedProducts();
+		for (Map.Entry<Long, Integer> orderShoppingCart : orderDTO.getShoppingCart().entrySet()) {
+			for (Map.Entry<Product, Integer> retailerProducts : offeredProducts.entrySet()) {
+				if (productRepo.findById(orderShoppingCart.getKey()).get() == retailerProducts.getKey()) {
+					shoppingCart.put(retailerProducts.getKey(), orderShoppingCart.getValue());
+				}
+			}
 		}
-		order.setShoppingCart(productMap);
+
+		order.setShoppingCart(shoppingCart);
 		order.setCustomer(customerRepo.findById(orderDTO.getCustomerId()).get());
 		order.setRetailer(retailerRepo.findById(orderDTO.getRetailerId()).get());
 		return order;
@@ -183,7 +208,7 @@ public class OrderService {
 	// Umwandlung von Entity zu DTO Objekt
 	private OrderDTOResponse convertToDTO(Order order) {
 		TypeMap<Order, OrderDTOResponse> typeMap = modelMapper.getTypeMap(Order.class, OrderDTOResponse.class);
-		if (typeMap == null) { // if not  already added
+		if (typeMap == null) { // if not already added
 			modelMapper.addMappings(new OrderDTOResponseMap());
 		}
 		OrderDTOResponse orderDTO = modelMapper.map(order, OrderDTOResponse.class);

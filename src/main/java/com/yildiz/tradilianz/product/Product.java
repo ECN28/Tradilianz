@@ -31,21 +31,17 @@ public class Product {
 	@NotBlank
 	private String category;
 	private String brand;
-	private Integer quantity;
-	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
-	private Set<Retailer> retailers = new HashSet<>();
 
 	protected Product() {
 
 	}
 
-	public Product(String productName, String description, Double price, String category, String brand, Integer quantity) {
+	public Product(String productName, String description, Double price, String category, String brand) {
 		this.productName = productName;
 		this.description = description;
 		this.price = price;
 		this.category = category;
 		this.brand = brand;
-		this.quantity = quantity;
 	}
 
 	public Long getId() {
@@ -92,25 +88,11 @@ public class Product {
 		return brand;
 	}
 	
-	public Integer getQuantity() {
-		return quantity;
-	}
 
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
 	
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-
-	public Set<Retailer> getRetailers() {
-		return retailers;
-	}
-
-	public void setRetailers(Set<Retailer> retailers) {
-		this.retailers = retailers;
-	}
 
 	@Override
 	public boolean equals(Object o) {

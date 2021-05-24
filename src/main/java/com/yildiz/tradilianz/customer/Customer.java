@@ -43,6 +43,7 @@ public class Customer {
 	private String phoneNumber;
 	@CreationTimestamp
 	private Timestamp timestamp;
+	@Column(columnDefinition = "Decimal(10,2)")
 	private Double balance;
 	private Integer bonuspoints;
 	private String role;

@@ -58,21 +58,6 @@ public class ProductController {
 		return productService.findByPriceGreaterThan(priceGreater);
 	}
 	
-	@GetMapping(value = "/products", params ="quantity", produces = "application/json; charset=UTF-8")
-	public Set<ProductDTO> getAllProductsByQuantity(@RequestParam(name="quantity", required = true) Integer quantity){
-		return productService.findByQuantity(quantity);
-	}
-	
-	@GetMapping(value = "/products", params ="quantityGreater", produces = "application/json; charset=UTF-8")
-	public Set<ProductDTO> getAllProductsByQuantityGreaterThan(@RequestParam(name="quantityGreater", required = true) Integer quantityGreater){
-		return productService.findByQuantityGreaterThan(quantityGreater);
-	}
-	
-	@GetMapping(value = "/products", params ="quantityLess", produces = "application/json; charset=UTF-8")
-	public Set<ProductDTO> getAllProductsByQuantityLessThan(@RequestParam(name="quantityLess", required = true) Integer quantityLess){
-		return productService.findByQuantityLessThan(quantityLess);
-	}
-	
 	@PostMapping(value="/products", produces = "application/json; charset=UTF-8")
 	public ProductDTO saveProduct(@Validated @RequestBody ProductDTO productDTO) {
 		return productService.saveProduct(productDTO);

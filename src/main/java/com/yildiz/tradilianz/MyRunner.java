@@ -46,7 +46,8 @@ public class MyRunner implements CommandLineRunner {
 	private PasswordEncoder passEncoder;
 
 	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo,
-			OrderRepository orderRepo, ProductService productService, OrderService orderService, PasswordEncoder passEncoder) {
+			OrderRepository orderRepo, ProductService productService, OrderService orderService,
+			PasswordEncoder passEncoder) {
 		this.customerRepo = customerRepo;
 		this.retailerRepo = retailerRepo;
 		this.productRepo = productRepo;
@@ -65,8 +66,8 @@ public class MyRunner implements CommandLineRunner {
 
 		// save few customers
 		Customer customer1 = customerRepo.save(new Customer("Jen300", passEncoder.encode("MySecretPass30!"), "Jennifer",
-				"Lopez", "24.07.1969", "New York street 33", "New York City", "10100", "JenniferLopezNYC@gmail.com", "-",
-				150944.833, 2000, "ROLE_CUSTOMER"));
+				"Lopez", "24.07.1969", "New York street 33", "New York City", "10100", "JenniferLopezNYC@gmail.com",
+				"-", 150944.833, 2000, "ROLE_CUSTOMER"));
 		Customer customer2 = customerRepo.save(
 				new Customer("ECN2828", passEncoder.encode("Ercoo309"), "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
 						"Leipzig", "04205", "ercan_xxx@hotmail.de", "0176217xxxx", 2240.50, 10, "ROLE_CUSTOMER"));
@@ -125,12 +126,12 @@ public class MyRunner implements CommandLineRunner {
 			log.info("Hier wird geprüft, ob findByname funktioniert!: " + savedRetailer);
 
 			// create some products
-			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor", 10);
-			Product hose1 = new Product("Nike HerrenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike", 15);
-			Product hose2 = new Product("Nike DamenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike", 22);
-			Product hose3 = new Product("HoseHose", "Slim Fit Jeans von Hose", 19.99, "Jeans", "Hose", 39);
-			Product hose4 = new Product("G&G Herrenhose", "Slim Fit Jeans von G&G", 9.99, "Jeans", "Tom Tailor", 29);
-			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Jeans", "ECN28", 105);
+			Product hose = new Product("TT Jeans", "Slim Fit Jeans von Tom Tailor", 59.99, "Jeans", "Tom Tailor");
+			Product hose1 = new Product("Nike HerrenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike");
+			Product hose2 = new Product("Nike DamenHose", "Slim Fit Jeans von Nike", 89.99, "Jeans", "Nike");
+			Product hose3 = new Product("HoseHose", "Slim Fit Jeans von Hose", 19.99, "Jeans", "Hose");
+			Product hose4 = new Product("G&G Herrenhose", "Slim Fit Jeans von G&G", 9.99, "Jeans", "Tom Tailor");
+			Product hose5 = new Product("ECN28 Jeans", "Slim Fit Jeans von ECN28", 159.99, "Jeans", "ECN28");
 
 			// many other products created in data.sql... --> look up classpath
 			// (src/main/resources/data.sql)!
@@ -139,15 +140,23 @@ public class MyRunner implements CommandLineRunner {
 			productRepo.saveAll(Arrays.asList(hose, hose1, hose2, hose3, hose4, hose5));
 
 			// add products to retailer
-			List<Product> products = new ArrayList<>();
-			products.addAll(Arrays.asList(hose, hose1, hose2, hose3, hose4, hose5));
-			retailerECN28.setProducts(products);
+			Map<Product, Integer> offeredProducts = new HashMap<>();
+			offeredProducts.put(hose, 100);
+			offeredProducts.put(hose1, 100);
+			offeredProducts.put(hose2, 100);
+			offeredProducts.put(hose3, 100);
+			offeredProducts.put(hose4, 100);
+			offeredProducts.put(hose5, 100);
+			
+			retailerECN28.setOfferedProducts(offeredProducts);
 
-			List<Product> products2 = new ArrayList<>();
-			Iterable<Product> product2Iterable = productRepo.findAll();
-			product2Iterable.forEach(products2::add);
+			var products= productRepo.findAll();
+			Map<Product, Integer> offeredProducts2 = new HashMap<>();
+			for(Product product: products) {
+				offeredProducts2.put(product, 100);
+			}
 
-			retailerSarah.setProducts(products2);
+			retailerSarah.setOfferedProducts(offeredProducts2);
 
 			retailerRepo.save(retailerSarah);
 
@@ -207,46 +216,39 @@ public class MyRunner implements CommandLineRunner {
 			/*
 			 * Order repository
 			 */
-
-			Order order1 = new Order(OrderStatus.PENDING);
-			order1.setRetailer(retailerECN28);
-			order1.setCustomer(customer1);
-			Map<Product, Integer> shoppingCart = new HashMap<>();
-			List<Product> productList = retailerECN28.getProducts();
-			shoppingCart.put(productList.get(0), 4);
-			shoppingCart.put(productList.get(1), 20);
-			shoppingCart.put(productList.get(2), 10);
-			shoppingCart.put(productList.get(3), 20);
-			shoppingCart.put(productList.get(4), 5);
-
-			// calculate total amout shoppingCart
-			double amount = 0;
-			for (Map.Entry<Product, Integer> productMap: shoppingCart.entrySet()) {
-				amount += productMap.getKey().getPrice()*productMap.getValue();
-			}
-			order1.setAmount(amount);
-			order1.setShoppingCart(shoppingCart);
-
-			// check shoppingCart amount vs customer balance
-			if (customer1.getBalance() > amount) {
-				order1.setStatus(OrderStatus.CONFIRMED);
-				order1.setBonuspoints(10);
-			} else {
-				order1.setStatus(OrderStatus.CANCELED);
-			}
-			orderRepo.saveAndFlush(order1);
-			
-			log.info("Saved order"+orderRepo.findAll().toString());
-			
 			/*
+			 * Order order1 = new Order(OrderStatus.PENDING);
+			 * order1.setRetailer(retailerECN28); order1.setCustomer(customer1);
+			 * Map<Product, Integer> shoppingCart = new HashMap<>(); List<Product>
+			 * productList = retailerECN28.getProducts();
+			 * shoppingCart.put(productList.get(0), 4); shoppingCart.put(productList.get(1),
+			 * 20); shoppingCart.put(productList.get(2), 10);
+			 * shoppingCart.put(productList.get(3), 20);
+			 * shoppingCart.put(productList.get(4), 5);
+			 * 
+			 * // calculate total amout shoppingCart double amount = 0; for
+			 * (Map.Entry<Product, Integer> productMap: shoppingCart.entrySet()) { amount +=
+			 * productMap.getKey().getPrice()*productMap.getValue(); }
+			 * order1.setAmount(amount); order1.setShoppingCart(shoppingCart);
+			 * 
+			 * // check shoppingCart amount vs customer balance if (customer1.getBalance() >
+			 * amount) { order1.setStatus(OrderStatus.CONFIRMED); order1.setBonuspoints(10);
+			 * } else { order1.setStatus(OrderStatus.CANCELED); }
+			 * orderRepo.saveAndFlush(order1);
+			 * 
+			 * log.info("Saved order"+orderRepo.findAll().toString());
+			 * 
+			 * 
 			 * OrderService Section
+			 * 
+			 * 
+			 * List<OrderDTOResponse> orderDTOs = orderService.getAllOrders();
+			 * log.info("OrderDTOs: "+orderDTOs.toString());
+			 * log.info("find order by customer: "+orderRepo.findBycustomerId(1L).toString()
+			 * );
+			 * log.info("find order by retailer: "+orderRepo.findByretailerId(7L).toString()
+			 * );
 			 */
-			
-			List<OrderDTOResponse> orderDTOs = orderService.getAllOrders();
-			log.info("OrderDTOs: "+orderDTOs.toString());
-			log.info("find order by customer: "+orderRepo.findBycustomerId(1L).toString());
-			log.info("find order by retailer: "+orderRepo.findByretailerId(7L).toString());
-
 
 		} catch (NoSuchElementException ex) {
 			log.info(ex.getMessage());

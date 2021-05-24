@@ -20,6 +20,5 @@ public class ProductDTO {
 	@NotBlank
 	private String category;
 	private String brand;
-	private Integer quantity;
 
 }

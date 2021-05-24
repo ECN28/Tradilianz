@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.yildiz.tradilianz.exception.ProductNotFoundException;
 
 @Service
+@Transactional
 public class ProductService {
 	
 	private ModelMapper modelMapper;
@@ -82,33 +85,6 @@ public class ProductService {
 	public Set<ProductDTO> findByCategory(String category){
 		Set<ProductDTO> productDTOs = new HashSet<>();
 		Set<Product> products = productRepo.findBycategory(category);
-		for(Product p: products) {
-			productDTOs.add(convertToDTO(p));
-		}
-		return productDTOs;
-	}
-	
-	public Set<ProductDTO> findByQuantity(Integer quantity){
-		Set<ProductDTO> productDTOs= new HashSet<>();
-		Set<Product> products = productRepo.findByquantity(quantity);
-		for(Product p: products) {
-			productDTOs.add(convertToDTO(p));
-		}
-		return productDTOs;
-	}
-	
-	public Set<ProductDTO> findByQuantityGreaterThan(Integer quantity){
-		Set<ProductDTO> productDTOs= new HashSet<>();
-		Set<Product> products = productRepo.findByquantityGreaterThan(quantity);
-		for(Product p: products) {
-			productDTOs.add(convertToDTO(p));
-		}
-		return productDTOs;
-	}
-	
-	public Set<ProductDTO> findByQuantityLessThan(Integer quantity){
-		Set<ProductDTO> productDTOs= new HashSet<>();
-		Set<Product> products = productRepo.findByquantityLessThan(quantity);
 		for(Product p: products) {
 			productDTOs.add(convertToDTO(p));
 		}
