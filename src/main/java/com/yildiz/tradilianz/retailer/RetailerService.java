@@ -21,15 +21,12 @@ public class RetailerService {
 	private RetailerRepository retailerRepo;
 	private RetailerDTO retailerDTO;
 	private ModelMapper modelMapper;
-	private PasswordEncoder passwordEncoder;
 	private Logger log = LoggerFactory.getLogger(RetailerService.class);
 
-	public RetailerService(RetailerRepository retailerRepo, RetailerDTO retailerDTO, ModelMapper modelMapper,
-			PasswordEncoder passwordEncoder) {
+	public RetailerService(RetailerRepository retailerRepo, RetailerDTO retailerDTO, ModelMapper modelMapper) {
 		this.retailerRepo = retailerRepo;
 		this.retailerDTO = retailerDTO;
 		this.modelMapper = modelMapper;
-		this.passwordEncoder = passwordEncoder;
 	}
 
 	public Set<RetailerDTO> findAll() {
@@ -66,7 +63,7 @@ public class RetailerService {
 
 	public RetailerDTO save(RetailerDTO retailerDTO) {
 		if (retailerDTO != null) {
-			retailerDTO.setPassword(passwordEncoder.encode(retailerDTO.getPassword()));
+			retailerDTO.setPassword(retailerDTO.getPassword());
 			retailerDTO.setRole("ROLE_RETAILER");
 			Retailer savedRetailer = retailerRepo.save(convertToEntity(retailerDTO));
 			return convertToDTO(savedRetailer);
@@ -80,7 +77,7 @@ public class RetailerService {
 		if (retailerRepo.findById(id) == null) {
 			throw new RetailerNotFoundException(id);
 		} else {
-			retailerDTO.setPassword(passwordEncoder.encode(retailerDTO.getPassword()));
+			retailerDTO.setPassword(retailerDTO.getPassword());
 			retailerDTO.setId(id);
 			retailerDTO.setRole("ROLE_RETAILER");
 			Retailer retailer = convertToEntity(retailerDTO);

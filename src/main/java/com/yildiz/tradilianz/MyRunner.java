@@ -43,17 +43,14 @@ public class MyRunner implements CommandLineRunner {
 	private OrderRepository orderRepo;
 	private ProductService productService;
 	private OrderService orderService;
-	private PasswordEncoder passEncoder;
 
 	public MyRunner(CustomerRepository customerRepo, RetailerRepository retailerRepo, ProductRepository productRepo,
-			OrderRepository orderRepo, ProductService productService, OrderService orderService,
-			PasswordEncoder passEncoder) {
+			OrderRepository orderRepo, ProductService productService, OrderService orderService) {
 		this.customerRepo = customerRepo;
 		this.retailerRepo = retailerRepo;
 		this.productRepo = productRepo;
 		this.productService = productService;
 		this.orderService = orderService;
-		this.passEncoder = passEncoder;
 		this.orderRepo = orderRepo;
 	}
 
@@ -65,11 +62,11 @@ public class MyRunner implements CommandLineRunner {
 		 */
 
 		// save few customers
-		Customer customer1 = customerRepo.save(new Customer("Jen300", passEncoder.encode("MySecretPass30!"), "Jennifer",
+		Customer customer1 = customerRepo.save(new Customer("Jen300", "MySecretPass30!", "Jennifer",
 				"Lopez", "24.07.1969", "New York street 33", "New York City", "10100", "JenniferLopezNYC@gmail.com",
 				"-", 150944.833, 2000, "ROLE_CUSTOMER"));
 		Customer customer2 = customerRepo.save(
-				new Customer("ECN2828", passEncoder.encode("Ercoo309"), "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
+				new Customer("ECN2828", "Ercoo309", "Ercan", "Yildiz", "20.02.19xx", "Titaniaweg x",
 						"Leipzig", "04205", "ercan_xxx@hotmail.de", "0176217xxxx", 2240.50, 10, "ROLE_CUSTOMER"));
 		try {
 			// fetch all customers

@@ -21,13 +21,11 @@ public class CustomerService {
 	private CustomerRepository customerRepository;
 	private CustomerDTO customerDTO;
 	private ModelMapper modelMapper;
-	private PasswordEncoder passEncoder;
 	
-	public CustomerService(CustomerRepository customerRepository, CustomerDTO customerDTO, ModelMapper modelMapper, PasswordEncoder passEncoder) {
+	public CustomerService(CustomerRepository customerRepository, CustomerDTO customerDTO, ModelMapper modelMapper) {
 		this.customerRepository = customerRepository;
 		this.customerDTO = customerDTO;
 		this.modelMapper = modelMapper;
-		this.passEncoder = passEncoder;
 	}
 	
 
@@ -65,7 +63,7 @@ public class CustomerService {
 	// Speicher einen Kunden in der Datenbank und gebe diesen zurück
 	public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
 		if (customerDTO != null) {
-			customerDTO.setPassword(passEncoder.encode(customerDTO.getPassword()));
+			customerDTO.setPassword(customerDTO.getPassword());
 			customerDTO.setRole("ROLE_CUSTOMER");
 			Customer savedObject = customerRepository.save(convertToEntity(customerDTO));
 			CustomerDTO responseCustomer = convertToDto(customerRepository.findById(savedObject.getId()).get());
@@ -93,7 +91,7 @@ public class CustomerService {
 			customer.setPhoneNumber(customerDTO.getPhoneNumber());
 			customer.setPostalCode(customerDTO.getPostalCode());
 			customer.setStreetAddress(customerDTO.getStreetAddress());
-			customer.setPassword(passEncoder.encode(customerDTO.getPassword()));
+			customer.setPassword(customerDTO.getPassword());
 			customer.setRole(customerDTO.getRole());
 			Customer responseCustomer = customerRepository.save(customer);
 			return convertToDto(responseCustomer);
