@@ -19,6 +19,8 @@ import com.yildiz.tradilianz.customer.Customer;
 import com.yildiz.tradilianz.customer.CustomerRepository;
 import com.yildiz.tradilianz.exception.CustomerBalanceToLowException;
 import com.yildiz.tradilianz.exception.CustomerNotFoundException;
+import com.yildiz.tradilianz.exception.OrderByCustomerNotFoundException;
+import com.yildiz.tradilianz.exception.OrderByRetailerNotFoundException;
 import com.yildiz.tradilianz.exception.OrderNotFoundException;
 import com.yildiz.tradilianz.exception.ProductNotFoundException;
 import com.yildiz.tradilianz.product.Product;
@@ -56,7 +58,7 @@ public class OrderService {
 	}
 
 	public OrderDTOResponse getOneOrder(Long id) {
-		Order order = orderRepo.findById(id).get();
+		Order order = orderRepo.findByid(id);
 		if (order == null) {
 			throw new OrderNotFoundException(id);
 		} else {
@@ -69,7 +71,7 @@ public class OrderService {
 		List<OrderDTOResponse> orderDTOs = new ArrayList<>();
 		List<Order> orderList = orderRepo.findBycustomerId(id);
 		if (orderList.isEmpty()) {
-			throw new OrderNotFoundException(id);
+			throw new OrderByCustomerNotFoundException(id);
 		} else {
 			for (Order order : orderList) {
 				orderDTOs.add(convertToDTO(order));
@@ -77,29 +79,28 @@ public class OrderService {
 		}
 		return orderDTOs;
 	}
-	
+
 	public List<OrderDTOResponse> getOrderByAmountLessThan(Double amount) {
 		List<Order> orderList = orderRepo.findByamountLessThan(amount);
-		if(orderList.isEmpty()) {
+		if (orderList.isEmpty()) {
 			throw new OrderNotFoundException(null);
 		}
 		List<OrderDTOResponse> orderDTOList = new ArrayList<>();
-		
-		for(Order order: orderList) {
+
+		for (Order order : orderList) {
 			orderDTOList.add(convertToDTO(order));
 		}
 		return orderDTOList;
 	}
-	
 
 	public List<OrderDTOResponse> getOrderByAmountGreaterThan(Double amount) {
 		List<Order> orderList = orderRepo.findByamountGreaterThan(amount);
-		if(orderList.isEmpty()) {
+		if (orderList.isEmpty()) {
 			throw new OrderNotFoundException(null);
 		}
 		List<OrderDTOResponse> orderDTOList = new ArrayList<>();
-		
-		for(Order order: orderList) {
+
+		for (Order order : orderList) {
 			orderDTOList.add(convertToDTO(order));
 		}
 		return orderDTOList;
@@ -109,7 +110,7 @@ public class OrderService {
 		List<OrderDTOResponse> orderDTOs = new ArrayList<>();
 		List<Order> orderList = orderRepo.findByretailerId(id);
 		if (orderList.isEmpty()) {
-			throw new OrderNotFoundException(id);
+			throw new OrderByRetailerNotFoundException(id);
 		} else {
 			for (Order order : orderList) {
 				orderDTOs.add(convertToDTO(order));
@@ -188,9 +189,10 @@ public class OrderService {
 		return convertToDTO(order);
 	}
 	/*
-	 *  We should not allow to manipulate transactions directly! Instead I plan to make a 
-	 *  seperate api in which only "proven" request could be cancelled by transfering back the money
-	 *  to customer/retailer after products get delivered back and so on... 
+	 * We should not allow to manipulate transactions directly! Instead I plan to
+	 * make a seperate api in which only "proven" request could be cancelled by
+	 * transfering back the money to customer/retailer after products get delivered
+	 * back and so on...
 	 * 
 	 * public OrderDTOResponse updateOrder(Long id, OrderDTO orderDTO, Retailer
 	 * retailer) { orderDTO.setId(id); Order order = convertToEntity(orderDTO,
@@ -237,8 +239,5 @@ public class OrderService {
 		orderDTO.setShoppingCart(order.getShoppingCart());
 		return orderDTO;
 	}
-
-
-
 
 }

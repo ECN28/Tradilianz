@@ -26,7 +26,7 @@ public class Customer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank
-	@Size(max = 20)
+	@Size(max = 40)
 	private String username;
 	@NotBlank
 	@Size(max = 60)
@@ -45,7 +45,7 @@ public class Customer {
 	private String phoneNumber;
 	@CreationTimestamp
 	private Timestamp timestamp;
-	@Column(columnDefinition = "Decimal(10,2)")
+	@Column(columnDefinition = "Decimal(20,2)")
 	private Double balance;
 	private Integer bonuspoints;
 	private String role;
@@ -73,14 +73,6 @@ public class Customer {
 		this.balance = balance;
 		this.bonuspoints = bonuspoints;
 		this.role = role;
-	}
-
-	@Override
-	public String toString() {
-		return ("Benutzername: " + username + " Passwort: " + password + " Vorname: " + givenName + " Nachname: "
-				+ surname + " Geburtstag: " + birthday + " Straße: " + streetAddress + " Stadt: " + city
-				+ " Postleitzahl: " + postalCode + " E-Mail-Adresse: " + email + " Telefonnummer: " + phoneNumber
-				+ " Kontostand: " + balance + " Bonuspunkte: " + bonuspoints + " Rolle:" + role);
 	}
 
 	public String getUsername() {
@@ -201,5 +193,13 @@ public class Customer {
 	public void setRole(String role) {
 		this.role = role;
 	}
-
+	
+	@Override
+	public String toString() {
+		return ("Benutzername: " + username + " Passwort: " + password + " Vorname: " + givenName + " Nachname: "
+				+ surname + " Geburtstag: " + birthday + " Straße: " + streetAddress + " Stadt: " + city
+				+ " Postleitzahl: " + postalCode + " E-Mail-Adresse: " + email + " Telefonnummer: " + phoneNumber
+				+ " Kontostand: " + balance + " Bonuspunkte: " + bonuspoints + " Rolle:" + role);
+	}
+	
 }

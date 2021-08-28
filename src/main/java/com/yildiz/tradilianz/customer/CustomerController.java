@@ -2,6 +2,8 @@ package com.yildiz.tradilianz.customer;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +41,14 @@ public class CustomerController {
 	}
 
 	@PostMapping(value = "/customers", produces = "application/json; charset=UTF-8" )
-	public CustomerDTO addCustomer(@Validated @RequestBody CustomerDTO customerDTO) throws Exception {
-		return customerService.saveCustomer(customerDTO);
+	public ResponseEntity<CustomerDTO> addCustomer(@Validated @RequestBody CustomerDTO customerDTO) throws Exception {
+		
+		CustomerDTO savedCustomerDTO =  customerService.saveCustomer(customerDTO);
+		if(savedCustomerDTO != null) {
+			return new ResponseEntity<CustomerDTO>(savedCustomerDTO, HttpStatus.CREATED);
+		}else {
+			throw new Exception();
+		}
 	}
 
 	@PutMapping(value = "/customers/{id}", produces = "application/json; charset=UTF-8" )
