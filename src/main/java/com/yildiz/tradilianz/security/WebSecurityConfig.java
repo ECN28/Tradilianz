@@ -30,9 +30,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         an OAuth2 Resource Server, using JWT validation.
         */
         http.authorizeRequests()
-                .mvcMatchers("/api/public").permitAll()
-                .mvcMatchers("/api/private").authenticated()
-                .mvcMatchers("/api/private-scoped").hasAuthority("SCOPE_read:messages")
+                .mvcMatchers("/customers").authenticated()
+                .mvcMatchers("/customers/*").authenticated()
+                .mvcMatchers("/orders").authenticated()
+                .mvcMatchers("/orders/*").authenticated()
+                .mvcMatchers("/products").authenticated()
+                .mvcMatchers("/products/*").authenticated()
+                .mvcMatchers("/retailers").authenticated()
+                .mvcMatchers("/retailers/*").authenticated()
+                //.mvcMatchers("/api/private-scoped").hasAuthority("SCOPE_read:messages") example using scope
                 .and().cors()
                 .and().oauth2ResourceServer().jwt();
     }
